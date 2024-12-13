@@ -1,0 +1,363 @@
+/* Resetowanie marginesów i paddingu */
+body, h1, h2, h3, p, ul, li, a, input, button {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Ogólne style strony */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f7f8fc;
+    margin: 0;
+}
+
+/* Nagłówek */
+header {
+    background-color: #4CAF50;
+    color: white;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+header nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+header nav ul li {
+    margin-left: 1.5rem;
+}
+
+header nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+header nav ul li a:hover {
+    color: #ffdd57;
+}
+
+/* Hero section */
+.hero {
+    background: url('/images/img.png');
+    background-size: cover;
+    gap: 10rem; /* Odstęp między elementami */
+    height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    padding: 0 1rem;
+}
+
+#maxDistance {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+select[multiple] {
+    height: auto; /* Automatyczna wysokość dopasowana do liczby opcji */
+    min-height: 150px; /* Minimalna wysokość */
+    overflow-y: auto; /* Pionowy pasek przewijania */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #fff;
+}
+.hero-text {
+    width: 70vh; /* Stała szerokość, aby uniknąć przeskoków */
+    text-align: left;
+}
+
+.hero h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+.hero .button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.hero .button:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+/* Sekcja usług */
+section {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.services {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+.services-list {
+    width: 100%;
+}
+
+.sort-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.service-card {
+    flex: 1 1 calc(33.333% - 2rem);
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.service-card img {
+    max-width: 100%;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+}
+
+.service-card h4 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: #4CAF50;
+}
+.service-card h5 {
+    margin-bottom: 0.5rem;
+    color: #4CAF50;
+}
+
+.service-card p {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+/* Stopka */
+footer {
+    text-align: center;
+    padding: 1rem;
+    background: #333;
+    color: white;
+    font-size: 0.9rem;
+}
+
+footer p {
+    margin: 0;
+}
+/* Formularz logowania */
+.login-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /*max-width: 400px;*/
+    margin: 2rem auto;
+    text-align: center;
+}
+
+.login-form h3 {
+    margin-bottom: 1rem;
+    color: #4CAF50;
+}
+
+.login-form .form-group {
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
+.login-form label {
+    color: black;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.login-form input {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 0.9rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.login-form .button {
+    display: inline-block;
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.login-form .button:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+.login-form p {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.logo-link {
+    display: inline-block;
+    text-decoration: none;
+}
+
+.logo-image {
+    width: 75px; /* Dostosuj szerokość obrazu */
+    height: auto; /* Automatyczne skalowanie wysokości */
+    display: block;
+}
+
+
+.logo-link h1 {
+    font-size: 1.8rem;
+    margin: 0;
+    color: white;
+}
+
+.logo-link:hover h1 {
+    color: #ffdd57; /* Opcjonalny efekt najechania myszką */
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="password"],
+input[type="address"]{
+    padding: 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    width: 100%;
+}
+
+button.button {
+    margin-top: 2rem;
+    width: 100%;
+}
+#processed-address {
+    margin-top: 5px;
+    font-size: 0.9em;
+    font-style: italic;
+    max-width: initial;
+}
+.offers-container {
+    display: flex;
+    gap: 20px;
+}
+
+.filters {
+    width: 15%;
+    padding: 10px;
+    border-right: 1px solid #ccc;
+}
+
+
+
+.offer-card {
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+.sort-buttons {
+    margin-top: 0;
+    align-self: flex-start; /* Wyrównanie do góry */
+}
+.price-inputs {
+    display: flex;
+    gap: 10px; /* Odstęp między inputami */
+    width: 100%;
+}
+
+.price-inputs input {
+    flex: 1; /* Ustawienie jednakowej szerokości */
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 45%;
+}
+.filters .form-group {
+    margin-bottom: 20px; /* Odstęp między grupami formularza */
+}
+
+/* Stylizacja rozwijanego menu */
+.filters select {
+    width: 100%; /* Rozciągnięcie na pełną szerokość kontenera */
+    padding: 10px; /* Wewnętrzny margines */
+    font-size: 1rem; /* Rozmiar czcionki */
+    border: 1px solid #ccc; /* Obramowanie */
+    border-radius: 5px; /* Zaokrąglenie rogów */
+    background-color: #fff; /* Kolor tła */
+    appearance: none; /* Ukrycie domyślnej strzałki */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('/images/dropdown-arrow.png'); /* Ikona strzałki */
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+}

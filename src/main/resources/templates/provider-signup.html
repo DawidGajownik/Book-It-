@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+      <html xmlns:th="http://www.thymeleaf.org" lang="${#locale.language}">
+      <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title th:text="#{app.provider.signup.title}">Book It! - Become a Provider</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div th:insert="elements/navbar"></div>
+
+<div class="hero">
+
+  <div class="hero-text">
+    <h2 th:text="#{app.provider.signup.title}">Become a Provider</h2>
+    <p th:text="#{app.provider.signup.subtitle}">Expand your business by connecting with our customers.</p>
+  </div>
+  <div class="container">
+    <div class="login-form">
+      <h3 th:text="#{app.provider.signup.heading}">Provider Registration</h3>
+      <form th:action="@{/provider-signup}" th:object="${user}" method="post">
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label for="username" th:text="#{app.username}">Username</label>
+            <input type="text" id="username" name="username" th:field="*{username}" required>
+          </div>
+          <div class="form-group">
+            <label for="email" th:text="#{app.email}">Email</label>
+            <input type="email" id="email" name="email" th:field="*{email}" required>
+          </div>
+          <div class="form-group">
+            <label for="password" th:text="#{app.password}">Password</label>
+            <input type="password" id="password" name="password" th:field="*{password}" required>
+          </div>
+          <div class="form-group">
+            <label for="confirm-password" th:text="#{app.confirm_password}">Confirm Password</label>
+            <input type="password" id="confirm-password" name="confirmPassword" required>
+          </div>
+          <div class="form-group">
+            <label for="company-name" th:text="#{app.provider.company_name}">Company Name</label>
+            <input type="text" id="company-name" name="companyName" th:field="*{company.name}" required>
+          </div>
+          <div class="form-group">
+            <label for="tax-id" th:text="#{app.provider.tax_id}">Tax ID (NIP)</label>
+            <input type="text" id="tax-id" name="taxId" th:field="*{company.taxId}" required>
+          </div>
+          <div class="form-group">
+            <label for="address" th:text="#{app.provider.address}">Address</label>
+            <input type="text" id="address" name="address" required onblur="processAddress()">
+          </div>
+          <div class="form-group">
+            <label for="phone" th:text="#{app.provider.phone}">Phone Number</label>
+            <input type="tel" id="phone" name="phone" th:field="*{company.phoneNumber}"  required>
+          </div>
+          <div class="form-group">
+            <label for="industry" th:text="#{app.provider.industry}">Industry</label>
+            <select id="industry" name="company.industry.id" th:field="*{company.industry.id}">
+              <option th:each="industry : ${industries}"
+                      th:value="${industry.id}"
+                      th:text="${industry.name}">
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="company-description" th:text="#{app.provider.company_description}">Company Description</label>
+          <textarea id="company-description" name="company-description" th:field="*{company.description}" rows="5" cols="30" required></textarea>
+        </div>
+        <p id="processedAddress" style="color: green" ></p>
+        <button type="submit" class="button" th:text="#{app.provider.signup_button}">Register as Provider</button>
+      </form>
+      <p th:text="#{app.provider.signup.have_account}">Already have an account?</p>
+      <a href="/login" class="button" th:text="#{app.login_button}">Log In</a>
+    </div>
+  </div>
+
+</div>
+
+<section id="provider-signup">
+
+</section>
+
+<footer>
+  <p th:text="'&copy; 2024 Bookit. ' + #{app.footer.copyright}">&copy; 2024 Bookit. All rights reserved.</p>
+</footer>
+</body>
+      <script>
+        function processAddress() {
+          const addressInput = document.getElementById('address');
+          const processedAddressOutput = document.getElementById('processedAddress');
+
+          if (addressInput.value.trim() === '') {
+            processedAddressOutput.textContent = '';
+            return;
+          }
+
+          fetch(`/process?address=${encodeURIComponent(addressInput.value)}`)
+                  .then(response => {
+                    if (!response.ok) {
+                      throw new Error('Error processing address');
+                    }
+                    return response.text();
+                  })
+                  .then(data => {
+                    processedAddressOutput.textContent = data;
+                  })
+                  .catch(error => {
+                    processedAddressOutput.textContent = 'Error processing address';
+                    console.error('Error:', error);
+                  });
+        }
+      </script>
+
+</html>

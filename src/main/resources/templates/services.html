@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="${#locale.language}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="#{app.services.title2}">Book It! - Browse Services</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div th:insert="elements/navbar"></div>
+
+<div class="hero" style="background: #7bd8e6; height: auto; align-items: flex-start">
+  <!-- Sidebar Filters -->
+  <aside class="filters">
+    <form method="get" action="/services">
+      <div class="form-group">
+        <label for="name" th:text="#{app.services.filter.name}">Name</label>
+        <input type="text" id="name" name="name" th:placeholder="#{app.services.filter.name.placeholder}">
+      </div>
+      <div class="form-group">
+        <label for="industry" th:text="#{app.services.filter.industry}">Industry</label>
+        <select id="industry" name="industry" multiple>
+          <option th:each="industry : ${industries}" th:value="${industry.id}" th:text="${industry.name}"></option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="address" th:text="#{app.services.filter.location}">Location</label>
+        <input type="text" id="address" name="address" th:placeholder="#{app.offers.filter.location.placeholder}" onblur="processAddress()">
+        <p id="processedAddress" style="color: green; font-size: 80%; line-height: 1.5; height: 4.5em; overflow: hidden;"></p>
+      </div>
+      <div class="form-group">
+        <label for="maxDistance" th:text="#{app.services.filter.max_distance}">Max Distance (km)</label>
+        <input type="number" id="maxDistance" name="maxDistance" min="1" placeholder="e.g. 50">
+      </div>
+      <div class="form-group">
+        <label for="priceRange" th:text="#{app.services.filter.price}">Price Range</label>
+        <div class="price-inputs">
+          <input type="number" id="priceMin" name="priceMin" placeholder="Min">
+          <input type="number" id="priceMax" name="priceMax" placeholder="Max">
+        </div>
+      </div>
+      <button type="submit" class="button" th:text="#{app.services.filter.apply}">Apply Filters</button>
+    </form>
+  </aside>
+
+
+  <!-- Services List -->
+  <section class="services-list">
+    <div class="sort-buttons">
+      <button th:onclick="sortServices('name')" class="button" th:text="#{app.services.sort.name}">Sort by Name</button>
+      <button th:onclick="sortServices('price')" class="button" th:text="#{app.services.sort.price}">Sort by Price</button>
+      <button th:onclick="sortServices('rating')" class="button" th:text="#{app.services.sort.rating}">Sort by Rating</button>
+    </div>
+    <div class="services">
+      <div th:each="service : ${services}" class="service-card">
+        <h4 th:text="${service.company.name}">Company Name</h4>
+        <h5 th:text="${service.name}">Service description</h5>
+        <p th:text="${service.description}">Service description</p>
+        <p><strong th:text="'Price: ' + ${service.price} + ' ' + #{app.currency}">Price: $100</strong></p>
+<!--        <p><strong th:text="'Rating: ' + ${service.rating}">Rating: 4.5</strong></p>-->
+        <a th:href="@{/service/{id}(id=${service.id})}" class="button" th:text="#{app.services.details}">View Details</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <p th:text="'&copy; 2024 Bookit. ' + #{app.footer.copyright}">&copy; 2024 Bookit. All rights reserved.</p>
+</footer>
+
+<script>
+  function sortServices(criteria) {
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('sort', criteria);
+    window.location.search = urlParams.toString();
+  }
+  function processAddress() {
+    const addressInput = document.getElementById('address');
+    const processedAddressOutput = document.getElementById('processedAddress');
+
+    if (addressInput.value.trim() === '') {
+      processedAddressOutput.textContent = '';
+      return;
+    }
+
+    fetch(`/process?address=${encodeURIComponent(addressInput.value)}`)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Error processing address');
+              }
+              return response.text();
+            })
+            .then(data => {
+              processedAddressOutput.textContent = data;
+            })
+            .catch(error => {
+              processedAddressOutput.textContent = 'Error processing address';
+              console.error('Error:', error);
+            });
+  }
+</script>
+
+</body>
+</html>

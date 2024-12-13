@@ -1,0 +1,19 @@
+<header>
+    <a href="/" class="logo-link">
+        <img src="/images/logo.png" alt="Book It Logo" class="logo-image">
+    </a>
+    <nav>
+        <ul>
+            <li><a href="#services" th:text="#{app.nav.services}">Services</a></li>
+            <li><a href="#about" th:text="#{app.nav.about}">About</a></li>
+            <li><a href="#contact" th:text="#{app.nav.contact}">Contact</a></li>
+            <li><a href="/login" class="button" th:text="#{app.nav.login}">Login</a></li>
+            <li><a href="/signup" class="button" th:text="#{app.nav.signup}">Sign Up</a></li>
+        </ul>
+        <div>
+            <a href="?lang=pl">Polski</a> |
+            <a href="?lang=en">English</a> |
+            <a href="?lang=nl">Nederlands</a>
+        </div>
+    </nav>
+</header>

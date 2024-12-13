@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{app.title}">Book It! - Sign Up</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div th:insert="elements/navbar"></div>
+
+<div class="hero">
+
+    <div class="hero-text">
+        <h2 th:text="#{app.signup.title}">Sign Up for an Account</h2>
+        <p th:text="#{app.signup.subtitle}">Create your account and start booking appointments.</p>
+        <a href="/provider-signup" class="button" th:text="#{app.signup.provider_link}">Become a Provider</a>
+    </div>
+    <div class="container">
+        <div class="login-form" style="width: 50vh " >
+            <h3 th:text="#{app.signup.heading}">Sign Up</h3>
+            <form th:action="@{/signup}" method="post">
+                <div class="form-group">
+                    <label for="username" th:text="#{app.username}">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="email" th:text="#{app.email}">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password" th:text="#{app.password}">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password" th:text="#{app.confirm_password}">Confirm Password</label>
+                    <input type="password" id="confirm-password" name="confirm-password" required>
+                </div>
+                <button type="submit" class="button" th:text="#{app.signup_button}">Sign Up</button>
+            </form>
+            <p th:text="#{app.signup.have_account}">Already have an account?</p>
+            <a href="/login" class="button" th:text="#{app.login_button}">Log In</a>
+        </div>
+    </div>
+</div>
+
+<section id="signup">
+
+</section>
+
+<footer>
+    <p th:text="'&copy; 2024 Bookit. ' + #{app.footer.copyright}">&copy; 2024 Bookit. All rights reserved.</p>
+</footer>
+</body>
+</html>

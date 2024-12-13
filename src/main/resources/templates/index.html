@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{app.title}">Book It! - Simplify Your Appointments</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<div th:insert="elements/navbar"></div>
+
+<div class="hero">
+
+    <div>
+        <h2 th:text="#{app.title}">Schedule Appointments with Ease</h2>
+        <p th:text="#{app.subtitle}">Book your next appointment quickly and hassle-free.</p>
+        <a href="#services" class="button" th:text="#{app.button.get_started}">Get Started</a>
+    </div>
+    <div class="hero-text">
+        <h2></h2>
+        <p></p>
+    </div>
+</div>
+
+<section id="services">
+    <h3>Our Services</h3>
+    <div class="services">
+        <div th:each="industry : ${industries}" class="service-card">
+            <img th:src="'data:image/png;base64,' + ${industry.base64Image}" th:alt="${industry.name}">
+            <h4 th:text="${industry.name}">Industry Name</h4>
+            <p th:text="${industry.description}">Industry Description</p>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <p th:text="'&copy; 2024 Bookit. ' + #{app.footer.copyright}">&copy; 2024 Bookit. All rights reserved.</p>
+</footer>
+</body>
+</html>
