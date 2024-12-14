@@ -13,10 +13,9 @@ import java.util.*
 class GoogleTranslate {
     private val APIKEY = "AIzaSyBVEnKq5YxoW7wOQRCj_smmVYfgiIpfK0w"
 
-    fun translate(text: String, language: Locale): String {
-        val translate: Translate = TranslateOptions.newBuilder().setApiKey(APIKEY).build().getService()
-        val detection: Detection = translate.detect(text)
-        if (language.toString() == detection.getLanguage()) {
+    fun translate(text: String, language: Locale, sourceLanguage: String): String {
+        val translate: Translate = TranslateOptions.newBuilder().setApiKey(APIKEY).build().service
+        if (language.toString() == sourceLanguage) {
             return text
         }
         if (text.isEmpty()) {
@@ -24,9 +23,26 @@ class GoogleTranslate {
         }
         val translation: Translation = translate.translate(
             text,
-            Translate.TranslateOption.sourceLanguage(detection.getLanguage()),
-            Translate.TranslateOption.targetLanguage(language.getLanguage())
+            Translate.TranslateOption.sourceLanguage(sourceLanguage),
+            Translate.TranslateOption.targetLanguage(language.language)
         )
-        return translation.getTranslatedText()
+        return translation.translatedText
+    }
+
+    fun translateWithDetection(text: String, language: Locale): String {
+        val translate: Translate = TranslateOptions.newBuilder().setApiKey(APIKEY).build().service
+        val detection: Detection = translate.detect(text)
+        if (language.toString() == detection.language) {
+            return text
+        }
+        if (text.isEmpty()) {
+            return ""
+        }
+        val translation: Translation = translate.translate(
+            text,
+            Translate.TranslateOption.sourceLanguage(detection.language),
+            Translate.TranslateOption.targetLanguage(language.language)
+        )
+        return translation.translatedText
     }
 }

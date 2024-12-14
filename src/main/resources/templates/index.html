@@ -24,7 +24,7 @@
 </div>
 
 <section id="services">
-    <h3>Our Services</h3>
+    <h3 th:text="#{our.services}">Our Services</h3>
     <div class="services">
         <div th:each="industry : ${industries}" class="service-card">
             <img th:src="'data:image/png;base64,' + ${industry.base64Image}" th:alt="${industry.name}">

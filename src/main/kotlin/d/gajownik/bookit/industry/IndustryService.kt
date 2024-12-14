@@ -17,22 +17,26 @@ class IndustryService (
             .orElseThrow { IllegalArgumentException("Industry with ID $id not found") }
     }
     fun findAllAndTranslate(locale: Locale): MutableList<Industry?>? {
+
         if (industryRepository.findAll().size==0){
             return industryRepository.findAll()
         }
-        val industries = industryRepository.findAll().stream().map(this::copyCategory).toList()
 
-        val query: String = industries.joinToString("%") { it?.name.toString() }
-        val translated: List<String> = googleTranslate.translate(query, locale).split("%")
+        val industries = industryRepository.findAll().stream().map(this::copy).toList()
+        val queryNames: String = industries.joinToString("%") { it?.name.toString() }
+        val queryDescriptions = industries.joinToString("%") { it?.description.toString() }
+        val query = queryNames+"%"+queryDescriptions
+        val translated: List<String> = googleTranslate.translate(query, locale, "en").split("%")
+        val transNames = translated.subList(0, translated.size/2)
+        val transDescriptions = translated.subList(translated.size/2, translated.size)
 
-        for (i in translated.indices) {
-            industries.get(i)?.name =translated[i]
+        for (i in transNames.indices) {
+            industries[i]?.name =transNames[i]
+            industries[i]?.description = transDescriptions[i]
         }
-
         return industries
     }
-    fun copyCategory(industry: Industry): Industry? {
-        val id = industry.id
+    fun copy(industry: Industry): Industry? {
         return industry.name?.let { industry.description?.let { it1 -> Industry(industry.id, it, it1) } }
     }
 }
