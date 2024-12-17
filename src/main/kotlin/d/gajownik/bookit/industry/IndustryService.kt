@@ -1,10 +1,12 @@
 package d.gajownik.bookit.industry
 
 import d.gajownik.bookit.GoogleTranslate
+import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
+@Transactional
 class IndustryService (
     private val industryRepository: IndustryRepository,
     private val googleTranslate: GoogleTranslate

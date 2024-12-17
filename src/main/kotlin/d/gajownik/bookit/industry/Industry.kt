@@ -16,11 +16,8 @@ data class Industry(
     var image: ByteArray? = null,
 
     @Column(columnDefinition = "LONGTEXT")
-    var base64Image: String? = null,
-
-    @OneToMany(mappedBy = "industry", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
-    var companies: MutableList<Company> = mutableListOf()) // Użycie generycznego typu List<Company>
-             {
+    var base64Image: String? = null)
+{
     constructor(id: Long, name: String, description: String) : this(
         id = id,
         name = name,

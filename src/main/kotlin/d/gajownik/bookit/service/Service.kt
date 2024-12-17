@@ -3,9 +3,11 @@ package d.gajownik.bookit.service
 import d.gajownik.bookit.company.Company
 import d.gajownik.bookit.user.User
 import jakarta.persistence.*
+import lombok.NoArgsConstructor
 import java.math.BigDecimal
 
 @Entity
+@NoArgsConstructor
 data class Service(
 
     @Id
@@ -24,11 +26,18 @@ data class Service(
     @Column(nullable = false, length = 1000)
     var description: String = "",
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    var user: User? = null, // Wiele usług może być powiązanych z jednym użytkownikiem
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "service_users",
+        joinColumns = [JoinColumn(name = "service_id")],
+        inverseJoinColumns = [JoinColumn(name = "user_id")]
+    )
+    var users: MutableSet<User> = mutableSetOf(), // Wiele użytkowników może być przypisanych do jednej usługi
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", referencedColumnName = "id")
-    var company: Company? = null // Wiele usług może być powiązanych z jedną firmą
+    var company: Company? = null, // Wiele usług może być powiązanych z jedną firmą
+    
+    var places: Int = 0,
+    var choosableEmployee: Boolean = false
 )

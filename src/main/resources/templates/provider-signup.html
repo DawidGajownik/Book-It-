@@ -54,8 +54,28 @@
             <input type="tel" id="phone" name="phone" th:field="*{company.phoneNumber}"  required>
           </div>
           <div class="form-group">
+            <label for="work-time-start" th:text="#{work.time.start}">Otwarte od:</label>
+            <input type="time" id="work-time-start" name="work-time-start" th:field="*{company.workTimeStart}">
+          </div>
+          <div class="form-group">
+            <label for="work-time-end" th:text="#{work.time.end}">Otwarte do:</label>
+            <input type="time" id="work-time-end" name="work-time-end" th:field="*{company.workTimeEnd}">
+          </div>
+          <div class="form-group">
+            <label for="working-days" th:text="#{working.days}">Otwarte w</label>
+            <select id="working-days" name="working-days" th:field="*{company.workingDays}" multiple>
+              <option th:text="#{monday}" th:value=1>pon</option>
+              <option th:text="#{tuesday}" th:value=2>wt</option>
+              <option th:text="#{wednesday}" th:value=3>sr</option>
+              <option th:text="#{thursday}" th:value=4>cz</option>
+              <option th:text="#{friday}" th:value=5>pt</option>
+              <option th:text="#{saturday}" th:value=6>sob</option>
+              <option th:text="#{sunday}" th:value=7>ndz</option>
+            </select>
+          </div>
+          <div class="form-group">
             <label for="industry" th:text="#{app.provider.industry}">Industry</label>
-            <select id="industry" name="company.industry.id" th:field="*{company.industry.id}">
+            <select id="industry" name="company.industry.id" th:field="*{company.industry}" multiple>
               <option th:each="industry : ${industries}"
                       th:value="${industry.id}"
                       th:text="${industry.name}">

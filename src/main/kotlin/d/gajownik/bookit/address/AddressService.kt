@@ -1,6 +1,7 @@
 package d.gajownik.bookit.address
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import d.gajownik.bookit.APIConfig
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.io.IOException
@@ -16,16 +17,14 @@ import kotlin.math.sqrt
 @Service
 @Transactional
 class AddressService(
-    private val addressRepository: AddressRepository
+    private val addressRepository: AddressRepository,
 ){
-
-
-
+    private val APIKEY = APIConfig.API_KEY
     @Throws(IOException::class)
     fun findData(address: Address, locale: Locale): Address? {
         val mapper = ObjectMapper()
         val url =
-            URL("https://maps.googleapis.com/maps/api/geocode/json?address=" + googleMapsApiAddressQuery(address) + "&key=AIzaSyBVEnKq5YxoW7wOQRCj_smmVYfgiIpfK0w")
+            URL("https://maps.googleapis.com/maps/api/geocode/json?address=" + googleMapsApiAddressQuery(address) + "&key=" + APIKEY)
         return getAddressData(address, mapper, url, locale)
     }
 

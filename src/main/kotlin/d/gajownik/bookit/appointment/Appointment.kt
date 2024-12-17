@@ -20,6 +20,10 @@ data class Appointment(
     @JoinColumn(name = "client_id", referencedColumnName = "id", nullable = false)
     var client: User, // Powiązanie z klientem (użytkownikiem)
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_id", referencedColumnName = "id", nullable = false)
+    var employee: User, // Powiązanie z klientem (użytkownikiem)
+
     @Column(nullable = false)
     var startDateTime: LocalDateTime, // Data i godzina rozpoczęcia
 

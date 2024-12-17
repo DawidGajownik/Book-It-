@@ -11,7 +11,7 @@ import java.util.*
 @Component
 @RequiredArgsConstructor
 class GoogleTranslate {
-    private val APIKEY = "AIzaSyBVEnKq5YxoW7wOQRCj_smmVYfgiIpfK0w"
+    private val APIKEY = APIConfig.API_KEY
 
     fun translate(text: String, language: Locale, sourceLanguage: String): String {
         val translate: Translate = TranslateOptions.newBuilder().setApiKey(APIKEY).build().service

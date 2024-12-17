@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Schedule for ' + ${day} + ' ' + ${monthName} + ' ' + ${year}">Booking Schedule</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+
+        .schedule-container {
+            margin: 2rem auto;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            color: #333333;
+            width: 100%;
+            background-color: #f5ebf3;
+        }
+        .navigation-links {
+            display: flex;
+            gap: 10px; /* Odstęp między przyciskami */
+        }
+    </style>
+</head>
+<body>
+<div th:insert="elements/navbar"></div>
+<div class="hero" style="height: unset">
+    <div class="schedule-container">
+        <div class="schedule-header">
+            <h2 th:text="'Schedule for ' + ${day} + ' ' + ${monthName} + ' ' + ${year}">Schedule for February 20, 2025</h2>
+            <div class="navigation-links">
+                <a th:href="@{/{serviceId}/month/{year}/{month}(year=${year}, month=${month}, serviceId=${serviceId})}" class="button">
+                    <span th:text="#{backto} + ' ' + ${monthName}">Back to styczeń</span></a>
+                <a th:href="@{/{serviceId}/week/{year}/{week}(year=${year}, week=${week}, serviceId=${serviceId})}" class="button">
+                    <span th:text="#{backto}+' Week '+ ${week}">Back to Week</span></a>
+            </div>
+        </div>
+
+        <div class="schedule-header">
+            <h2 th:text="${serviceName}">Schedule for February 20, 2025</h2>
+            <div class="navigation-links">
+                <a th:href="@{/{serviceId}/day/{year}/{month}/{day}(year=${year}, month=${month}, day=${day}, serviceId=${serviceId}-1)}" class="button">
+                    <span>Prev service</span></a>
+                <a th:href="@{/{serviceId}/day/{year}/{month}/{day}(year=${year}, month=${month}, day=${day}, serviceId=${serviceId}+1)}" class="button">
+                    <span>Next service</span></a>
+            </div>
+        </div>
+
+        <div id="timeSlots">
+            <!-- Time slots will be dynamically populated -->
+        </div>
+
+        <div class="navigation">
+            <button onclick="prevDay()">← Previous Day</button>
+            <button onclick="nextDay()">Next Day →</button>
+        </div>
+    </div>
+</div>
+
+<div th:insert="elements/footer"></div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    const year = /*[[${year}]]*/ 2025;
+    const month = /*[[${month}]]*/ 2;
+    const day = /*[[${day}]]*/ 20;
+    const week = /*[[${week}]]*/ 8; // Numer tygodnia przekazany z backendu
+
+    /*]]>*/
+</script>
+<script th:inline="javascript">
+
+    /*<![CDATA[*/
+
+    const timeSlotsContainer = document.getElementById("timeSlots");
+
+    // Dane przekazywane z backendu
+    const availableDays = /*[[${availableDays}]]*/ ['Monday', 'Tuesday', 'Wednesday', 'Friday'];
+    const occupation = /*[[${occupation}]]*/ {'07:00': 54, '08:00': 6, '09:00': 43};
+    const availableHours = Object.keys(occupation)
+    const serviceId = /*[[${serviceId}]]*/ 30;
+    const timeNeeded = /*[[${timeNeeded}]]*/ 3; // Czas w godzinach
+
+    const dayOfWeek = /*[[${dayOfWeek}]]*/ 'Monday'; // Bieżący dzień tygodnia
+    const bookedTimes = Object.entries(occupation).filter(([key, value])=>value===100).map(([key])=>key)
+
+    function renderTimeSlots() {
+        // Wyczyść poprzednie sloty
+        timeSlotsContainer.innerHTML = "";
+
+        // Sprawdź, czy dzień jest dostępny
+        // if (!availableDays.includes(dayOfWeek)) {
+        //     const message = document.createElement("p");
+        //     message.textContent = "This day is unavailable for booking.";
+        //     timeSlotsContainer.appendChild(message);
+        //     return;
+        // }
+
+        // Generuj sloty na podstawie godzin i zarezerwowanych terminów
+        availableHours.forEach(time => {
+            const timeSlot = document.createElement("div");
+            timeSlot.classList.add("time-slot");
+
+            if (bookedTimes.includes(time)) {
+                timeSlot.classList.add("unavailable");
+                timeSlot.textContent = `${time} - Booked`;
+            } else {
+                timeSlot.style.background = 'linear-gradient(to right, #f5acaf '+occupation[time]+'%, #bdf5c2 '+occupation[time]+'%)';
+                timeSlot.innerHTML = `<span>${time}</span> - Available`;
+                timeSlot.addEventListener("click", () => bookTime(time));
+            }
+
+            timeSlotsContainer.appendChild(timeSlot);
+        });
+    }
+
+    function bookTime(time) {
+        const url = `/${serviceId}/time/${year}/${month}/${day}/${time}`;
+        window.location.href = url;
+    }
+
+    function prevDay() {
+        const currentDate = new Date(year, month - 1, day); // Utwórz datę z bieżących wartości
+        currentDate.setDate(currentDate.getDate() - 1); // Cofnij o jeden dzień
+        navigateToDate(currentDate); // Przejdź do poprzedniego dnia
+    }
+
+    function nextDay() {
+        const currentDate = new Date(year, month - 1, day); // Utwórz datę z bieżących wartości
+        currentDate.setDate(currentDate.getDate() + 1); // Przesuń o jeden dzień do przodu
+        navigateToDate(currentDate); // Przejdź do następnego dnia
+    }
+
+    function navigateToDate(date) {
+        const newYear = date.getFullYear();
+        const newMonth = (date.getMonth() + 1).toString().padStart(2, "0"); // Miesiące są liczone od 0
+        const newDay = date.getDate().toString().padStart(2, "0");
+
+        const url = `/${serviceId}/day/${newYear}/${newMonth}/${newDay}`; // Budowanie adresu URL
+        window.location.href = url; // Przekierowanie na nowy adres
+    }
+
+    // Inicjalizacja
+    renderTimeSlots();
+
+    /*]]>*/
+</script>
+
+</body>
+</html>

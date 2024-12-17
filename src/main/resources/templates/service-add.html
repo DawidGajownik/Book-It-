@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{app.service.add.title}">Add New Service</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 0.8rem 1.2rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .button:hover {
+            background-color: #45a049;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 th:text="#{app.service.add.title}">Add New Service</h1>
+
+    <form method="post" th:action="@{/services/add}">
+        <!-- Service Name -->
+        <div class="form-group">
+            <label for="name" th:text="#{app.service.name}">Service Name</label>
+            <input type="text" id="name" name="name" placeholder="Enter service name" required>
+        </div>
+
+        <!-- Duration -->
+        <div class="form-group">
+            <label for="duration" th:text="#{app.service.duration}">Duration (minutes)</label>
+            <input type="number" id="duration" name="duration" placeholder="Enter duration in minutes" required>
+        </div>
+
+        <!-- Price -->
+        <div class="form-group">
+            <label for="price" th:text="#{app.service.price}">Price</label>
+            <input type="number" id="price" name="price" step="0.01" placeholder="Enter price" required>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+            <label for="description" th:text="#{app.service.description}">Description</label>
+            <textarea id="description" name="description" rows="5" placeholder="Enter service description" required></textarea>
+        </div>
+
+        <!-- Places -->
+        <div class="form-group">
+            <label for="places" th:text="#{app.service.places}">Places</label>
+            <input type="number" id="places" name="places" placeholder="Enter number of places" required>
+        </div>
+        <input hidden="hidden" id="company.id" name="company.id" th:value="${companyId}">
+        <!-- Required Employees -->
+        <div class="form-group">
+            <label for="users" th:text="#{app.service.required_employees}">Required Employees</label>
+            <select id="users" name="users" multiple>
+                <option th:each="user : ${users}"
+                        th:value="${user.id}"
+                        th:text="${user.username}">Employee</option>
+            </select>
+        </div>
+
+        <!-- Choosable Employee -->
+        <div class="form-group">
+            <label for="choosableEmployee" th:text="#{app.service.choosable_employee}">Choosable Employee</label>
+            <select id="choosableEmployee" name="choosableEmployee">
+                <option value="true" th:text="#{yes}">Yes</option>
+                <option value="false" th:text="#{no}">No</option>
+            </select>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="form-group">
+            <button type="submit" class="button" th:text="#{app.service.save}">Save Service</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

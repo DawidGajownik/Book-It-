@@ -52,11 +52,11 @@ class UserController(
             user.company.address=addressFull
         }
 
-        val industry = requireNotNull(user.company.industry) { "Industry cannot be null" }
-
-        val industryId = requireNotNull(industry.id) { "Industry ID cannot be null" }
-
-        user.company.industry = industryService.findById(industryId)
+//        val industry = requireNotNull(user.company.industry) { "Industry cannot be null" }
+//
+//        val industryId = requireNotNull(industry.id) { "Industry ID cannot be null" }
+//
+//        user.company.industry = industryService.findById(industryId)
 
 
         user.roles="ROLE_PROVIDER, ROLE_USER"

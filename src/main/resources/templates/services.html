@@ -18,6 +18,10 @@
         <input type="text" id="name" name="name" th:placeholder="#{app.services.filter.name.placeholder}">
       </div>
       <div class="form-group">
+        <label for="companyName" th:text="#{app.services.filter.companyName}">Company name</label>
+        <input type="text" id="companyName" name="companyName" th:placeholder="#{app.services.filter.companyName.placeholder}">
+      </div>
+      <div class="form-group">
         <label for="industry" th:text="#{app.services.filter.industry}">Industry</label>
         <select id="industry" name="industry" multiple>
           <option th:each="industry : ${industries}" th:value="${industry.id}" th:text="${industry.name}"></option>
@@ -53,11 +57,17 @@
     </div>
     <div class="services">
       <div th:each="service : ${services}" class="service-card">
+        <a th:href="@{/company/{id}(id=${service.company.id})}" class="company-logo-link">
+          <img th:src="'data:image/png;base64,' + ${service.company.base64Image}" th:alt="${service.company.name}">
+        </a>
         <h4 th:text="${service.company.name}">Company Name</h4>
         <h5 th:text="${service.name}">Service description</h5>
         <p th:text="${service.description}">Service description</p>
-        <p><strong th:text="'Price: ' + ${service.price} + ' ' + #{app.currency}">Price: $100</strong></p>
-<!--        <p><strong th:text="'Rating: ' + ${service.rating}">Rating: 4.5</strong></p>-->
+        <p>
+          <strong th:text="'Price: ' + ${service.price} + ' ' + #{app.currency}">Price: $100</strong>
+        </p>
+        <!-- Uncomment if rating is available -->
+        <!-- <p><strong th:text="'Rating: ' + ${service.rating}">Rating: 4.5</strong></p> -->
         <a th:href="@{/service/{id}(id=${service.id})}" class="button" th:text="#{app.services.details}">View Details</a>
       </div>
     </div>

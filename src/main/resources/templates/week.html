@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="${#locale.language}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="#{app.schedule.title}+' '+${year}+' '+#{calendar.week}+' '+${week}">Weekly Schedule</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    .schedule-container {
+      margin: 2rem auto;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      color: #333333;
+      background-color: #f5ebf3;
+      width: 100%;
+    }
+
+    .schedule-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .navigation-links button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 0.8rem 1.2rem;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .navigation-links button:hover {
+      background-color: #45a049;
+    }
+
+    .schedule-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    .schedule-table th, .schedule-table td {
+      border: 1px solid #ddd;
+      padding: 0.8rem;
+      text-align: center;
+    }
+
+    .schedule-table th {
+      background-color: #f4f4f4;
+      font-weight: bold;
+      text-transform: capitalize;
+    }
+
+    .hour-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .hour-list li {
+      margin: 0.5rem 0;
+    }
+
+    .hour-list a {
+      background: linear-gradient(to top, #f5acaf 0%, #bdf5c2 0%);
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      text-decoration: none;
+      color: white;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    .hour-list a:hover {
+      background-color: #3e8e41;
+    }
+
+    .hour-list a.disabled-hour {
+      cursor: not-allowed;
+      background-color: #f5acaf;
+      color: gray;
+    }
+
+    .day-button {
+      display: inline-block;
+      padding: 0.8rem 1.2rem;
+      margin: 0.5rem 0;
+      background-color: #7cd9e7;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      text-decoration: none;
+      text-align: center;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .day-button:hover {
+      background-color: #1976D2;
+    }
+  </style>
+</head>
+<body>
+<div th:insert="elements/navbar"></div>
+<div class="hero" style="height: unset">
+  <div class="schedule-container">
+    <div class="schedule-header">
+      <button class="button" style="width: 30%; font-weight: bold" onclick="prevWeek()">&#8592; Prev Week</button>
+      <a class="day-button" style="font-size: xx-large; font-weight: bold" th:href="@{/{serviceId}/month/{year}/{month}/(year=${weekDays[3].year}, month=${weekDays[3].month}, serviceId=${serviceId})}"
+         th:text="#{${weekDays[3].monthName}} + ' ' + ${year}">Styczuń</a>
+      <button class="button" style="width: 30%; font-weight: bold" onclick="nextWeek()">Next Week &#8594;</button>
+    </div>
+
+    <table class="schedule-table">
+      <thead>
+      <tr>
+        <th th:each="day : ${weekDays}">
+          <a class="day-button" th:href="@{/{serviceId}/day/{year}/{month}/{day}(year=${day.year}, month=${day.month}, day=${day.day}, serviceId=${serviceId})}"
+             th:text="${day.name}">Day</a>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td th:each="day, stat : ${weekDays}" th:classappend="${stat.index == 0} ? 'highlight' : ''">
+          <div th:text="${day.date}" style="color: black; font-weight: bold">Date</div>
+          <ul class="hour-list">
+            <li th:each="hour : ${day.availableHours}">
+              <a th:style="'background: linear-gradient(to right, #f5acaf ' + ${occupation[stat.index].get(hour)} + '%, #bdf5c2 ' + ${occupation[stat.index].get(hour)} + '%);'
+                    + (${occupation[stat.index].get(hour)} == 100 ? 'cursor: not-allowed;' : '')"
+                 th:href="${occupation[stat.index].get(hour)} != 100 ? @{/{serviceId}/time/{year}/{month}/{day}/{hour}(year=${day.year}, month=${day.month}, day=${day.day}, hour=${hour}, serviceId=${serviceId})} : null"
+                 th:text="${hour}"
+                 th:classappend="${occupation[stat.index].get(hour)} == 100 ? 'disabled-hour' : ''">Hour</a>
+            </li>
+          </ul>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<footer>
+  <p th:text="'&copy; 2024 BookIt. ' + #{app.footer.copyright}">&copy; 2024 BookIt. All rights reserved.</p>
+</footer>
+
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  const currentYear = /*[[${year}]]*/ 2025;
+  const currentWeek = /*[[${week}]]*/ 30;
+  const serviceId = /*[[${serviceId}]]*/ 30;
+
+  function prevWeek() {
+    navigateToWeek(currentYear, currentWeek - 1);
+  }
+
+  function nextWeek() {
+    navigateToWeek(currentYear, currentWeek + 1);
+  }
+
+  function navigateToWeek(year, week) {
+    const url = `/${serviceId}/week/${year}/${week}`;
+    window.location.href = url;
+  }
+  /*]]>*/
+</script>
+</body>
+</html>
