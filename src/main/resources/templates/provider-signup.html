@@ -101,35 +101,9 @@
 
 </section>
 
-<footer>
-  <p th:text="'&copy; 2024 Bookit. ' + #{app.footer.copyright}">&copy; 2024 Bookit. All rights reserved.</p>
-</footer>
+<div th:insert="elements/navbar"></div>
+
 </body>
-      <script>
-        function processAddress() {
-          const addressInput = document.getElementById('address');
-          const processedAddressOutput = document.getElementById('processedAddress');
 
-          if (addressInput.value.trim() === '') {
-            processedAddressOutput.textContent = '';
-            return;
-          }
-
-          fetch(`/process?address=${encodeURIComponent(addressInput.value)}`)
-                  .then(response => {
-                    if (!response.ok) {
-                      throw new Error('Error processing address');
-                    }
-                    return response.text();
-                  })
-                  .then(data => {
-                    processedAddressOutput.textContent = data;
-                  })
-                  .catch(error => {
-                    processedAddressOutput.textContent = 'Error processing address';
-                    console.error('Error:', error);
-                  });
-        }
-      </script>
-
+      <script src="/js/provider-signup.js"></script>
 </html>

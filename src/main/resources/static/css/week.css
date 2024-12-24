@@ -1,0 +1,99 @@
+
+.schedule-container {
+    margin: 2rem auto;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    color: #333333;
+    background-color: #f5ebf3;
+    width: 100%;
+}
+
+.schedule-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.navigation-links button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.2rem;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.navigation-links button:hover {
+    background-color: #45a049;
+}
+
+.schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.schedule-table th, .schedule-table td {
+    border: 1px solid #ddd;
+    padding: 0.8rem;
+    text-align: center;
+}
+
+.schedule-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+.hour-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.hour-list li {
+    margin: 0.5rem 0;
+}
+
+.hour-list a {
+    background: linear-gradient(to top, #f5acaf 0%, #bdf5c2 0%);
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    color: white;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.hour-list a:hover {
+    background-color: #3e8e41;
+}
+
+.hour-list a.disabled-hour {
+    cursor: not-allowed;
+    background-color: #f5acaf;
+    color: gray;
+}
+
+.day-button {
+    display: inline-block;
+    padding: 0.8rem 1.2rem;
+    margin: 0.5rem 0;
+    background-color: #7cd9e7;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.day-button:hover {
+    background-color: #1976D2;
+}

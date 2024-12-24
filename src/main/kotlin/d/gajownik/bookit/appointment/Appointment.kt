@@ -12,21 +12,16 @@ data class Appointment(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_id", referencedColumnName = "id", nullable = false)
-    var service: Service, // Powiązanie z usługą
+    @ManyToOne
+    var service: Service = Service(),
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "client_id", referencedColumnName = "id", nullable = false)
-    var client: User, // Powiązanie z klientem (użytkownikiem)
+    @ManyToOne
+    var client: User = User(),
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "employee_id", referencedColumnName = "id", nullable = false)
-    var employee: User, // Powiązanie z klientem (użytkownikiem)
+    @ManyToOne
+    var employee: User = User(),
 
-    @Column(nullable = false)
-    var startDateTime: LocalDateTime, // Data i godzina rozpoczęcia
+    var startDateTime: LocalDateTime = LocalDateTime.now(),
 
-    @Column(nullable = false)
-    var endDateTime: LocalDateTime // Data i godzina zakończenia
+    var endDateTime: LocalDateTime = LocalDateTime.now()
 )

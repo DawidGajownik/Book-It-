@@ -30,7 +30,7 @@ class AddressService(
 
     @Throws(IOException::class)
     fun findDataFromString(addressString: String?, locale: Locale): Address? {
-        if (addressString == null || addressString.isEmpty()) {
+        if (addressString.isNullOrEmpty()) {
             return null
         }
         val address = Address()
@@ -39,7 +39,7 @@ class AddressService(
             "https://maps.googleapis.com/maps/api/geocode/json?address=" + addressString.replace(
                 " ".toRegex(),
                 "%20"
-            ) + "&key=AIzaSyBVEnKq5YxoW7wOQRCj_smmVYfgiIpfK0w"
+            ) + "&key=" + APIKEY
         )
         return getAddressData(address, mapper, url, locale)
     }
@@ -154,20 +154,27 @@ class AddressService(
         return Math.round(6371.0 * c * 100.0) / 100.0
     }
 
-//    @Throws(IOException::class)
-//    fun distanceCalculate(bikes: List<Bike?>, address: Address?): Map<Bike, Double?> {
-//        val bikesWithDistance: MutableMap<Bike, Double?> = LinkedHashMap<Bike, Double?>()
-//        var addressLatitude: Double? = null
-//        var addressLongitude: Double? = null
-//        if (address != null && findData(address) != null) {
-//            addressLatitude = findData(address).getLatitude()
-//            addressLongitude = findData(address).getLongitude()
-//        }
-//        for (bike in bikes) {
-//            val bikeLatitude: Double = bike.getAddress().getLatitude()
-//            val bikeLongitude: Double = bike.getAddress().getLongitude()
-//            bikesWithDistance[bike] = haversine(addressLatitude, addressLongitude, bikeLatitude, bikeLongitude)
-//        }
-//        return bikesWithDistance
-//    }
+    @Throws(IOException::class)
+    fun distanceCalculate(addressFromDb: Address, typedAddress: String, locale: Locale): Double? {
+        var addressLatitude: Double? = null
+        var addressLongitude: Double? = null
+        if (findDataFromString(typedAddress, locale) != null) {
+            val address = findDataFromString(typedAddress, locale)
+            addressLatitude = address?.latitude
+            addressLongitude = address?.longitude
+        }
+        return haversine(addressLatitude, addressLongitude, addressFromDb.latitude, addressFromDb.longitude)
+    }
+
+    @Throws(IOException::class)
+    fun distanceCalculateFromCoordinates(latitude: Double, longitude: Double, typedAddress: String, locale: Locale): Double? {
+        var addressLatitude: Double? = null
+        var addressLongitude: Double? = null
+        if (findDataFromString(typedAddress, locale) != null) {
+            val address = findDataFromString(typedAddress, locale)
+            addressLatitude = address?.latitude
+            addressLongitude = address?.longitude
+        }
+        return haversine(addressLatitude, addressLongitude, latitude, longitude)
+    }
 }

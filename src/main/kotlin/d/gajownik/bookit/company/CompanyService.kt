@@ -12,4 +12,7 @@ class CompanyService(
     fun findAll(): List<Company>{
         return companyRepository.findAll()
     }
+    fun findByUserId(userId: Long): Company {
+        return companyRepository.findByUsersId(userId)
+    }
 }

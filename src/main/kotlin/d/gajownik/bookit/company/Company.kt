@@ -34,11 +34,11 @@ data class Company (
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-        name = "service_users",
-        joinColumns = [JoinColumn(name = "service_id")],
+        name = "company_users",
+        joinColumns = [JoinColumn(name = "company_id")],
         inverseJoinColumns = [JoinColumn(name = "user_id")]
     )
-    var users: MutableSet<User> = mutableSetOf(),
+    var users: MutableList<User> = mutableListOf(),
 
     @ManyToMany(fetch = FetchType.LAZY)
     var industry: MutableList<Industry> = mutableListOf(),

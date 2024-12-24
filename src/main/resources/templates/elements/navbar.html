@@ -4,16 +4,20 @@
     </a>
     <nav>
         <ul>
-            <li><a href="#services" th:text="#{app.nav.services}">Services</a></li>
+            <li><a href="/services" th:text="#{app.nav.services}">Services</a></li>
             <li><a href="#about" th:text="#{app.nav.about}">About</a></li>
             <li><a href="#contact" th:text="#{app.nav.contact}">Contact</a></li>
-            <li><a href="/login" class="button" th:text="#{app.nav.login}">Login</a></li>
-            <li><a href="/signup" class="button" th:text="#{app.nav.signup}">Sign Up</a></li>
+            <li th:if="${#authentication.principal=='anonymousUser'}"><a href="/login" class="button" th:text="#{app.nav.login}">Login</a></li>
+            <li th:if="${#authentication.principal=='anonymousUser'}"><a href="/signup" class="button" th:text="#{app.nav.signup}">Sign Up</a></li>
+            <li th:if="${#authentication.principal!='anonymousUser'}"><a href="/logout" class="button" th:text="#{app.nav.logout}">Log out</a></li>
+            <li th:if="${#authentication.principal!='anonymousUser'}"><a href="/dashboard" class="button" th:text="#{app.nav.dashboard}">Log out</a></li>
         </ul>
         <div>
             <a href="?lang=pl">Polski</a> |
             <a href="?lang=en">English</a> |
-            <a href="?lang=nl">Nederlands</a>
+            <a href="?lang=nl">Nederlands</a> |
+            <a href="?lang=da">Dansk</a> |
+            <a href="?lang=ru">Русский</a>
         </div>
     </nav>
 </header>

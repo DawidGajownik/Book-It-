@@ -3,11 +3,20 @@ package d.gajownik.bookit.appointment
 import d.gajownik.bookit.service.DayAvailability
 import d.gajownik.bookit.service.Service
 import d.gajownik.bookit.service.ServicesService
+import d.gajownik.bookit.user.User
+import d.gajownik.bookit.user.UserService
+import jakarta.servlet.http.HttpServletRequest
+import org.hibernate.Session
 import org.springframework.context.MessageSource
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.SessionAttribute
+import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -18,35 +27,35 @@ import java.util.*
 
 
 @Controller
-class AppointmentController (
+class AppointmentController(
     private val messageSource: MessageSource,
     private val servicesService: ServicesService,
     private val appointmentService: AppointmentService,
+    private val userService: UserService,
 ){
-    @GetMapping("{serviceId}/month/{year}/{month}")
+    @GetMapping("service/{serviceId}/month/{year}/{month}")
     fun month(model: Model, locale: Locale, @PathVariable year: Int, @PathVariable month: Int, @PathVariable serviceId: Long): String {
         val serviceOptional = servicesService.findById(serviceId)
         val service = serviceOptional.get()
-        val availableHours = getAvailableHours(service)
         val appointments = appointmentService.findAllByServiceId(serviceId).filter { s->s.startDateTime.year==year && s.startDateTime.monthValue==month}
 
         val map: MutableMap<Int,Int> = mutableMapOf()
         for (i in 0..<Month.of(month).length(year%4==0)) {
-            val maxToday = service.users.size * service.places * availableHours.size
-            val bookedAppointmentsToday = appointments.count { s -> s.startDateTime.dayOfMonth == i + 1 }
-            val availability = bookedAppointmentsToday * 100 / maxToday
-            map[i + 1] = availability
+            val hourlyOccupancy = getHourlyOccupancy(getAvailableHours(service), service, appointments.stream().filter { s -> s.startDateTime.dayOfMonth==i+1}.toList(), LocalDate.of(year, month, i+1), null, null)
+            val sum = hourlyOccupancy.values.stream().mapToInt { j:Int -> j }.sum()
+            val divisor = hourlyOccupancy.values.stream().count().toInt()
+            val occupancy = sum/divisor
+            map[i + 1] = occupancy
         }
         model.addAttribute("occupation",map)
         model.addAttribute("serviceId", serviceId)
-        model.addAttribute("avaliability")
         model.addAttribute("year", year)
         model.addAttribute("month", month-1)
         model.addAttribute("monthName",messageSource.getMessage(Month.of(month).name.lowercase(), null, locale))
         return "month"
     }
 
-    @GetMapping("/{serviceId}/week/{year}/{week}")
+    @GetMapping("service/{serviceId}/week/{year}/{week}")
     fun week(@PathVariable year: Int, @PathVariable week: Int, model: Model, locale: Locale, @PathVariable serviceId: Long): String {
 
         val serviceOptional = servicesService.findById(serviceId)
@@ -57,10 +66,10 @@ class AppointmentController (
         val weekEnd: LocalDate = weekStart.plusDays(6) // Niedziela
 
         if (week<1){
-            return "redirect:/${serviceId}/week/$year/1"
+            return "redirect:service/${serviceId}/week/$year/1"
         }
         if (weekEnd.year>year){
-            return "redirect:/${serviceId}/week/${weekEnd.year}/1"
+            return "redirect:service/${serviceId}/week/${weekEnd.year}/1"
         }
 
         val weekDays: MutableList<DayAvailability> = ArrayList<DayAvailability>()
@@ -108,7 +117,7 @@ class AppointmentController (
         return "week"
     }
 
-    @GetMapping("{serviceId}/day/{year}/{month}/{day}")
+    @GetMapping("service/{serviceId}/day/{year}/{month}/{day}")
     fun day(model: Model, locale: Locale, @PathVariable year: Int, @PathVariable month: Int, @PathVariable day: Int, @PathVariable serviceId: Long): String {
 
         val serviceOptional = servicesService.findById(serviceId)
@@ -125,6 +134,28 @@ class AppointmentController (
         model.addAttribute("month", month)
         model.addAttribute("day", day)
         return "day"
+    }
+
+    @GetMapping("service/{serviceId}/time/{year}/{month}/{day}/{hour}")
+    fun finalBooking (model: Model, @PathVariable serviceId: Long, @PathVariable year: Int, @PathVariable month: Int, @PathVariable day: Int, @PathVariable hour: String, request: HttpServletRequest): String {
+        val service = servicesService.findById(serviceId).get()
+        val users: MutableList<User> = mutableListOf()
+
+        request.session.setAttribute("linkWithHour", request.requestURI.toString())
+        model.addAttribute("users", users)
+        model.addAttribute("selectedTime", hour)
+        model.addAttribute("monthName",Month.of(month).name.lowercase())
+        model.addAttribute("service", service)
+        model.addAttribute("appointment", Appointment())
+        return "final-reservation"
+    }
+
+    @PostMapping("/confirm")
+    fun confirmBooking (@ModelAttribute appointment: Appointment, @RequestParam link: String, model: Model): String {
+        appointment.client = userService.getUser()!!
+        appointment.endDateTime=appointment.startDateTime
+        appointmentService.save(appointment)
+        return "redirect:$link"
     }
 
     fun getAvailableHours(service: Service): MutableList<LocalTime> {

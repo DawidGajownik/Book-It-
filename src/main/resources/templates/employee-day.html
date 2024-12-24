@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Schedule</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/employee-day.css">
+</head>
+<body>
+<div th:insert="elements/navbar"></div>
+<div class="hero">
+    <div class="schedule-container">
+        <!-- Godziny otwarcia -->
+        <div class="schedule">
+            <div class="hour" style="height: 1px"></div>
+            <div th:each="hour : ${#numbers.sequence(company.workTimeStart.hour, company.workTimeEnd.hour - 1)}"
+                 class="hour" th:data-hour="${hour}" th:text="${hour + ':00'}">9:00</div>
+        </div>
+
+        <!-- Bloki spotkań -->
+        <div class="blocks">
+
+            <div th:each="appointment : ${appointments}"
+                 class="block"
+                 th:data-id="1"
+                 th:style="'top: ' + ${appointment.value[0]} + 'px; height: ' + ${appointment.value[1]} + 'px;'"
+                 th:text="${appointment.key.service.name} +' ' + ${appointment.key.startDateTime.hour + ':' + (appointment.key.startDateTime.minute < 10 ? '0' : '') + appointment.key.startDateTime.minute} + ' - ' + ${appointment.key.endDateTime.hour + ':' + (appointment.key.endDateTime.minute < 10 ? '0' : '') + appointment.key.endDateTime.minute}">
+            </div>
+        </div>
+        <button class="button" id="save-button">Save Changes</button>
+
+    </div>
+
+</div>
+<script th:inline="javascript">
+    window.openingHours = /*[[${openingHours}]]*/ [[1,2],[3,4]]
+</script>
+<script src="/js/employee-day.js"></script>
+<div th:insert="elements/footer"></div>
+
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="${#locale.language}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="'Confirm Booking for ' + ${service.name}">Confirm Booking</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/confirm.css">
+</head>
+<body>
+<div th:insert="elements/navbar"></div>
+<div class="hero">
+  <div class="schedule-container" style="color: #333333">
+    <div class="schedule-header">
+      <h2 th:text="'Confirm Booking for ' + ${service.name}">Confirm Booking</h2>
+      <div class="navigation-links">
+        <a th:href="@{/service/{serviceId}/day/{year}/{month}/{day}(year=${year}, month=${month}, day=${day}, serviceId=${serviceId})}"
+           class="button">
+          <span>Back to Schedule</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="booking-details">
+      <h3 th:text="'Selected Time: ' + ${selectedTime}">Selected Time: 09:00</h3>
+      <h3 th:text="'Date: ' + ${day} + ' ' + ${monthName} + ' ' + ${year}">Date: February 20, 2025</h3>
+
+
+      <!-- Worker Selection (if allowed) -->
+
+        <label for="worker" th:text="#{app.select.worker}">Select Worker:</label>
+        <form th:action="@{/confirm}" method="post">
+          <div th:if="${service.choosableEmployee}" class="worker-selection">
+          <select id="worker" name="employee.id">
+            <option th:each="worker : ${service.users}"
+                    th:value="${worker.id}"
+                    th:text="${worker.username}">
+            </option>
+
+          </select>
+          </div>
+          <input type="hidden" name="link" th:value="@{/service/{serviceId}/day/{year}/{month}/{day}(year=${year}, month=${month}, day=${day}, serviceId=${serviceId})}">
+          <!-- ID usługi -->
+          <input type="hidden" name="service.id" th:value="${serviceId}">
+          <!-- Data i godzina rozpoczęcia -->
+          <input type="hidden" name="startDateTime" th:value="${year} + '-' + (${month < 10} ? '0' : '') + ${month} + '-' + (${day < 10} ? '0' : '') + ${day} + 'T' + ${selectedTime}">
+          <!-- Przycisk potwierdzenia -->
+          <button type="submit" class="buttonss confirm" th:text="#{app.confirm.booking}">Confirm Booking</button>
+        </form>
+
+
+      <!-- Service Details -->
+      <div class="service-details">
+        <p th:text="'Duration: ' + ${service.duration} + ' minutes'">Duration: 60 minutes</p>
+        <p th:text="'Price: ' + ${service.price} + ' ' + #{app.currency}">Price: $50</p>
+      </div>
+    </div>
+
+    <div class="confirm-buttons">
+      <!-- Przycisk anulowania -->
+      <a th:href="@{/service/{serviceId}/day/{year}/{month}/{day}(year=${year}, month=${month}, day=${day}, serviceId=${serviceId})}"
+         class="buttonss cancel" th:text="#{app.cancel.booking}">Cancel</a>
+    </div>
+  </div>
+</div>
+
+<div th:insert="elements/footer"></div>
+<script>
+  // Additional JS logic if needed
+</script>
+</body>
+</html>

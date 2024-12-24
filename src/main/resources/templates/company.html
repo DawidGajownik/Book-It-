@@ -5,104 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="#{app.moderator.title}">Moderator Panel</title>
     <link rel="stylesheet" href="/css/styles.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-
-        .section {
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 0.8rem 1.2rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-            transition: background-color 0.3s;
-        }
-
-        .button:hover {
-            background-color: #45a049;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-
-        table th, table td {
-            border: 1px solid #ddd;
-            padding: 0.8rem;
-            text-align: center;
-        }
-
-        table th {
-            background-color: #f4f4f4;
-            color: #333;
-        }
-
-        form input, form select {
-            padding: 0.5rem;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 0.5rem;
-            width: 100%;
-        }
-        input[type="number"] {
-            width: 100%; /* Pełna szerokość */
-            padding: 0.5rem;
-            font-size: 1rem;
-            border: 1px solid #ccc;
-            border-radius: 2px;
-            outline: none; /* Usunięcie obramowania po kliknięciu */
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-        select {
-            height: auto; /* Automatyczna wysokość dopasowana do liczby opcji */
-            overflow-y: auto; /* Pionowy pasek przewijania */
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 10px;
-            background-color: #fff;
-        }
-        select[multiple]{
-            width: 100%;
-            min-height: 7vh;
-            height: 4vh;
-        }
-
-    </style>
+    <link rel="stylesheet" href="/css/company.css">
 </head>
 <body>
 <div th:insert="elements/navbar"></div>
@@ -138,7 +41,7 @@
                 <td><input type="number" name="places" th:value="${service.places}"></td>
                 <td>
                     <select name="requiredEmployees" multiple>
-                        <option th:each="user : ${service.users}"
+                        <option th:each="user : ${service.company.users}"
                                 th:value="${user.id}"
                                 th:selected="${user.username}"
                                 th:text="${user.username}">Employee</option>
@@ -181,6 +84,7 @@
         </form>
     </div>
 </div>
+<div th:insert="elements/footer"></div>
 
 </body>
 </html>

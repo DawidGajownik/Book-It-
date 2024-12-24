@@ -18,7 +18,10 @@
     <div class="container">
         <div class="login-form" style="width: 50vh">
             <h3 th:text="#{app.login.heading}">Login</h3>
+            <h3 th:text="${link}">Login</h3>
             <form th:action="@{/login}" method="post">
+                <input type="hidden" name="link" th:value="${link}">
+
                 <div class="form-group">
                     <label for="username" th:text="#{app.username}">Username</label>
                     <input type="text" id="username" name="username" required>
@@ -39,8 +42,7 @@
 
 </section>
 
-<footer>
-    <p th:text="'&copy; 2024 Bookit. ' + #{app.footer.copyright}">&copy; 2024 Bookit. All rights reserved.</p>
-</footer>
+<div th:insert="elements/footer"></div>
+
 </body>
 </html>

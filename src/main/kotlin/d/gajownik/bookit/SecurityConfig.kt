@@ -20,13 +20,21 @@ class SecurityConfig {
         http
             .authorizeHttpRequests { requests ->
                 requests
-                    .requestMatchers( "/home", "/css/**", "/js/**", "/images/**", "/signup", "/provider-signup", "/process", "/").permitAll() // Publiczne strony
-                    .anyRequest().permitAll() // Wszystkie inne wymagają zalogowania
+                    .requestMatchers( "/", "/css/**", "/js/**", "/images/**", "/signup", "/provider-signup", "/process", "/service/**", "/services/**", "/filter-services").permitAll() // Publiczne strony
+                    .anyRequest().authenticated() // Wszystkie inne wymagają zalogowania
             }
             .formLogin { form ->
                 form
-                    .loginPage("/login") // Własna strona logowania
-                    .defaultSuccessUrl("/", true)
+                    .loginPage("/login")
+                    .successHandler { request, response, authentication ->
+                        val url = request.session.getAttribute("linkWithHour")
+                        request.session.removeAttribute("linkWithHour")
+                        var urlString = "/"
+                        if (url != null) {
+                            urlString=url.toString()
+                        }
+                        response.sendRedirect(urlString)
+                    }
                     .permitAll()
             }
             .logout { logout ->

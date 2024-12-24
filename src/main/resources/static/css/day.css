@@ -1,0 +1,13 @@
+.schedule-container {
+    margin: 2rem auto;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    color: #333333;
+    width: 100%;
+    background-color: #f5ebf3;
+}
+.navigation-links {
+    display: flex;
+    gap: 10px; /* Odstęp między przyciskami */
+}

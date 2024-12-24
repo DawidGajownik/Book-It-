@@ -5,6 +5,7 @@ import d.gajownik.bookit.user.User
 import jakarta.persistence.*
 import lombok.NoArgsConstructor
 import java.math.BigDecimal
+import java.time.LocalTime
 
 @Entity
 @NoArgsConstructor
@@ -20,6 +21,8 @@ data class Service(
     @Column(nullable = false)
     var duration: Int = 0, // Czas trwania w minutach
 
+    var timeSpace: Int = 0,
+
     @Column(nullable = false)
     var price: BigDecimal = BigDecimal.ZERO, // Cena w formacie BigDecimal
 
@@ -32,12 +35,15 @@ data class Service(
         joinColumns = [JoinColumn(name = "service_id")],
         inverseJoinColumns = [JoinColumn(name = "user_id")]
     )
-    var users: MutableSet<User> = mutableSetOf(), // Wiele użytkowników może być przypisanych do jednej usługi
+    var users: MutableList<User> = mutableListOf(), // Wiele użytkowników może być przypisanych do jednej usługi
+
+    @ElementCollection
+    var startHours: MutableList<LocalTime> = mutableListOf(),
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", referencedColumnName = "id")
     var company: Company? = null, // Wiele usług może być powiązanych z jedną firmą
-    
+
     var places: Int = 0,
     var choosableEmployee: Boolean = false
 )

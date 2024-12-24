@@ -25,8 +25,7 @@
       </div>
       <div class="form-group">
         <label for="address" th:text="#{app.services.filter.location}">Location</label>
-        <input type="text" id="address" name="address" th:placeholder="#{app.offers.filter.location.placeholder}" onblur="processAddress();filter()"
-               th:value="${param.address}">
+        <input type="text" id="address" name="address" th:placeholder="#{app.offers.filter.location.placeholder}" onblur="processAddress();filter()" th:value="${param.address}">
         <p id="processedAddress" style="color: green; font-size: 80%; line-height: 1.5; height: 4.5em; overflow: hidden;" th:text="${processedAddress}"></p>
       </div>
       <div class="form-group">
@@ -43,7 +42,6 @@
     </form>
   </aside>
 
-
   <!-- Services List -->
   <section class="services-list">
     <div class="sort-buttons">
@@ -51,32 +49,35 @@
       <button th:onclick="sortServices('price')" class="button" th:text="#{app.services.sort.price}">Sort by Price</button>
       <button th:onclick="sortServices('rating')" class="button" th:text="#{app.services.sort.rating}">Sort by Rating</button>
     </div>
-    <div class="services" id="services">
-      <div th:each="service : ${services}" class="service-card">
-        <a th:href="@{/company/{id}(id=${service.company.id})}" class="company-logo-link">
-          <img th:src="'data:image/png;base64,' + ${service.company.base64Image}" th:alt="${service.company.name}">
-        </a>
-        <h4 th:text="${service.company.name}">Company Name</h4>
-        <h5 th:text="${service.name}">Service description</h5>
-        <p th:text="${service.description}">Service description</p>
-        <p>
-          <strong th:text="'Price: ' + ${service.price} + ' ' + #{app.currency}">Price: $100</strong>
-        </p>
-        <!-- Uncomment if rating is available -->
-        <!-- <p><strong th:text="'Rating: ' + ${service.rating}">Rating: 4.5</strong></p> -->
-        <a th:href="@{/service/{id}(id=${service.id})}" class="button" th:text="#{app.services.details}">View Details</a>
-      </div>
-    </div>
+    <ul class="services" id="services">
+      <li th:each="service : ${services}" class="service-item">
+        <div class="service-details">
+          <a th:href="@{/company/{id}(id=${service.company.id})}" class="company-logo-link">
+            <img th:src="'data:image/png;base64,' + ${service.company.base64Image}" th:alt="${service.company.name}">
+          </a>
+          <div class="service-info">
+            <h4 th:text="${service.company.name}">Company Name</h4>
+            <h5 th:text="${service.name}">Service Name</h5>
+            <p th:text="${service.description}">Service description</p>
+            <p>
+              <strong th:text="'Price: ' + ${service.price} + ' ' + #{app.currency}">Price: $100</strong>
+            </p>
+            <!-- Uncomment if rating is available -->
+            <!-- <p><strong th:text="'Rating: ' + ${service.rating}">Rating: 4.5</strong></p> -->
+            <a th:href="@{/service/{id}(id=${service.id})}" class="button" th:text="#{app.services.details}">View Details</a>
+          </div>
+        </div>
+      </li>
+    </ul>
   </section>
 </div>
 
 <div th:insert="elements/footer"></div>
 <script th:inline="javascript">
-  window.services=document.getElementById("services")
+  window.services = document.getElementById("services")
   const currency = /*[[#{app.currency}]]*/ "a"
   const details = /*[[#{app.services.details}]]*/ "a"
 </script>
-<script src="/js/provider-signup.js"></script>
-
+<script src="/js/services-list.js"></script>
 </body>
 </html>

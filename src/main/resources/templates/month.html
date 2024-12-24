@@ -5,63 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="#{app.schedule.title}+' '+${monthName}+' '+${year}">Book a Meeting</title>
     <link rel="stylesheet" href="/css/styles.css">
-    <style>
-        .calendar-container {
-            height: 58%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #333333;
-            width: 100%;
-            background-color: #f5ebf3;
-        }
-
-        .calendar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
-
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: 1fr repeat(7, 1fr);
-            gap: 5px;
-            width: 100%;
-        }
-
-        .day-header {
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .day {
-            padding: 10px;
-            text-align: center;
-            border: 1px solid #ddd;
-            cursor: pointer;
-            background: linear-gradient(to top, #f5acaf 0%, #bdf5c2 0%);
-            transition: background 0.3s;
-        }
-
-        .day.disabled {
-            background-color: #f0f0f0;
-            cursor: default;
-        }
-
-        .week-link {
-            text-align: center;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .week-link:hover {
-            background-color: #45a049;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/month.css">
 </head>
 <body>
 <div th:insert="elements/navbar"></div>
@@ -92,154 +36,15 @@
         <div id="calendarDays" class="calendar-grid"></div>
     </div>
 </div>
-
-
 <script th:inline="javascript">
-    /*<![CDATA[*/
-    const translations = {
-        week: /*[[#{calendar.week}]]*/ 'Week'
-    };
-    const calendarDays = document.getElementById("calendarDays");
-    const currentMonthDisplay = document.getElementById("currentMonth");
-    const currentYearDisplay = document.getElementById("currentYear");
-    const serviceId = /*[[${serviceId}]]*/ 12;
-
-    const month = /*[[${month}]]*/ 1;
-    const year = /*[[${year}]]*/ 2025;
-    const monthName = /*[[${monthName}]]*/ "januar";
-    const occupation = /*[[${occupation}]]*/ 20;
-
-    function renderCalendar() {
-
-
-        currentMonthDisplay.textContent = /*[[${monthName}]]*/ "git"
-        currentYearDisplay.textContent = /*[[${year}]]*/ 2023
-        // Clear previous days
-        calendarDays.innerHTML = "";
-
-        const firstDayOfMonth = new Date(year, month, 1).getDay();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-        let currentWeek = 1;
-
-        // Add empty slots for days before the first day of the month
-        const offset = (firstDayOfMonth || 7) - 1;
-        for (let i = 0; i < offset; i++) {
-            if (i === 0) {
-                // Add week link
-                const weekLink = document.createElement("div");
-                weekLink.classList.add("week-link");
-                weekLink.textContent = `${translations.week} ${getWeekNumber(year, month-1, getPreviousDay(month-1, year))}`;
-                weekLink.addEventListener("click", () => navigateToWeek(year, getWeekNumber(year, month-1, getPreviousDay(month-1, year))));
-                if (month===0) {
-                    weekLink.textContent = `${translations.week} ${getWeekNumber(year, month, 1)}`;
-                    weekLink.addEventListener("click", () => navigateToWeek(year, getWeekNumber(year, month, 1)));
-                }
-                calendarDays.appendChild(weekLink);
-            }
-
-            const emptyCell = document.createElement("div");
-            emptyCell.classList.add("day", "disabled");
-            calendarDays.appendChild(emptyCell);
-        }
-
-        // Add days of the month
-        for (let day = 1; day <= daysInMonth; day++) {
-            if ((offset + day - 1) % 7 === 0) {
-                // Add week link
-                const weekLink = document.createElement("div");
-                weekLink.classList.add("week-link");
-                if (month === 11 && day > 25) {
-                    weekLink.textContent = `${translations.week} ${getWeekNumber(year+1, 0, 1)}`;
-                    weekLink.addEventListener("click", () => navigateToWeek(year+1, getWeekNumber(year+1, 0, 1)));
-                } else {
-                    weekLink.textContent = `${translations.week} ${getWeekNumber(year, month, day)}`;
-                    weekLink.addEventListener("click", () => navigateToWeek(year, getWeekNumber(year, month, day)));
-                }
-                calendarDays.appendChild(weekLink);
-                currentWeek++;
-            }
-
-            const dayCell = document.createElement("div");
-            dayCell.classList.add("day");
-            dayCell.textContent = day;
-
-            const percentOccupied = occupation[day]
-
-            // Ustaw dynamiczny kolor tła
-            dayCell.style.background = `linear-gradient(to top, #f5acaf ${percentOccupied}%, #bdf5c2 ${percentOccupied}%)`;
-
-            dayCell.addEventListener("click", () => navigateToBooking(year, month, day));
-
-            calendarDays.appendChild(dayCell);
-        }
-    }
-
-    function getPreviousDay(month, year) {
-        if (month === 0 || month === 2 || month === 4 || month === 6 || month === 7 || month === 9 || month === 11) {
-            return 31
-        }
-        if (month === 3 || month === 5 || month === 8 || month === 10) {
-            return 30
-        }
-        if (year%4===0) {
-            return 29
-        }
-        return 28
-    }
-
-    function navigateToBooking(year, month, day) {
-        const formattedMonth = String(month + 1).padStart(2, "0");
-        const formattedDay = String(day).padStart(2, "0");
-        const url = `/${serviceId}/day/${year}/${formattedMonth}/${formattedDay}`;
-        window.location.href = url;
-    }
-
-    function navigateToWeek(year, weekNumber) {
-        const url = `/${serviceId}/week/${year}/${weekNumber}`;
-        window.location.href = url;
-    }
-
-    function getWeekNumber(year, month, day) {
-        const date = new Date(year, month, day);
-        const startOfYear = new Date(year, 0, 0);
-        const pastDaysOfYear = (date - startOfYear) / 86400000;
-        return Math.ceil((pastDaysOfYear + startOfYear.getDay()) / 7);
-    }
-
-    function prevMonth() {
-        if (month===0){
-            changeDate(year-1, 12)
-        } else {
-            changeDate(year, month);
-        }
-    }
-
-    function nextMonth() {
-        if (month===11){
-            changeDate(year+1, 1)
-        } else {
-            changeDate(year, month+2)
-
-        }
-    }
-
-    function nextYear(){
-        changeDate(year+1, month+1)
-    }
-
-    function prevYear(){
-        changeDate(year-1, month+1)
-    }
-
-    function changeDate(year, month){
-        const url = `/${serviceId}/month/${year}/${month}`;
-        window.location.href = url;
-    }
-    // Initialize calendar
-    renderCalendar();
-    /*]]>*/
+    window.translations = { week: /*[[#{calendar.week}]]*/ 'Week' };
+    window.serviceId = /*[[${serviceId}]]*/ 12;
+    window.month = /*[[${month}]]*/ 1;
+    window.year = /*[[${year}]]*/ 2025;
+    window.monthName = /*[[${monthName}]]*/ "January";
+    window.occupation = /*[[${occupation}]]*/ {1: 20, 2: 50, 3: 70};
 </script>
+<script src="/js/month.js"></script>
 <div th:insert="elements/footer"></div>
 
 </body>

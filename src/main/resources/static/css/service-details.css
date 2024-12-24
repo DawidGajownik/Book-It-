@@ -1,0 +1,95 @@
+/* Stylizacja kontenera szczegółów usługi */
+.service-details-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: space-between;
+    align-items: flex-start;
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-size: 1rem;
+    color: #333;
+}
+
+.service-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.service-details-header h2 {
+    margin: 0;
+    font-size: 2rem;
+    color: #4CAF50;
+}
+
+.service-details-header .button {
+    padding: 0.8rem 1.5rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.service-details-header .button:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+/* Informacje o usłudze */
+.service-info {
+    margin-bottom: 2rem;
+}
+
+.service-info h3 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.service-info p {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.8;
+}
+
+.company-info h3 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.company-info p {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.8;
+}
+
+/* Stylizacja przycisku rezerwacji */
+.reserve-button {
+    display: block;
+    width: 100%;
+    padding: 1rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 2rem;
+}
+
+.reserve-button:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
