@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.*
 
 @RestController
-class AddressController (
+class AddressRestController (
     val addressService: AddressService,
     var messageSource: MessageSource
 ) {

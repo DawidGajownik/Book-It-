@@ -3,12 +3,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const blocks = document.querySelectorAll(".block");
     const hourHeight = 60; // Height in pixels for one hour block
     const quarterHeight = hourHeight / 4; // 15-minute interval height
+    const scheduleContainer = document.getElementById("schedule")
     const scheduleTop = document.querySelector(".blocks").getBoundingClientRect().top;
-    const scheduleHeight = 8 * hourHeight; // 9 hours from 9:00 to 17:00
+    console.log(scheduleContainer)
+    const scheduleHeight = (scheduleContainer.children.length-1) * hourHeight; // 9 hours from 9:00 to 17:00
     let dragOffsetY = 0;
     let currentBlock = null;
 
-    const scheduleContainer = document.getElementById("schedule")
+
     const openingHours = window.openingHours
 
 

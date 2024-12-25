@@ -21,10 +21,10 @@
             <p><strong th:text="#{service.details.duration} + ':'">Duration:</strong> <span th:text="${service.duration} + ' minutes'">60 minutes</span></p>
             <p><strong th:text="#{service.details.price} + ':'">Price:</strong> <span th:text="${service.price} + ' $'">$50</span></p>
             <p><strong th:text="#{service.details.description} + ':'">Description:</strong> <span th:text="${service.description}">Description of the service.</span></p>
-            <p><strong>Available Places:</strong> <span th:text="${service.places}"></span></p>
-            <p th:if="${service.choosableEmployee}"><strong>Worker Choosable:</strong> Yes</p>
-            <p th:if="${!service.choosableEmployee}"><strong>Worker Choosable:</strong> No</p>
-            <h4>Available Start Hours</h4>
+            <p><strong th:text="#{app.service.places} + ':'">Available Places:</strong> <span th:text="${service.places}"></span></p>
+            <p th:if="${service.choosableEmployee}"><strong th:text="#{app.service.choosable_employee} + ':'">Worker Choosable:</strong> Yes</p>
+            <p th:if="${!service.choosableEmployee}"><strong th:text="#{app.service.choosable_employee} + ':'">Worker Choosable:</strong> No</p>
+            <h4 th:text="#{start.hours} + ':'">Available Start Hours</h4>
             <ul>
                 <li th:each="hour : ${service.startHours}" th:text="${hour}">09:00</li>
             </ul>
@@ -34,10 +34,10 @@
             <p><strong th:text="#{service.details.companyName} + ':'">Name:</strong> <span th:text="${service.company.name}">Company Name</span></p>
             <p><strong th:text="#{service.details.companyPhone} + ':'">Phone:</strong> <span th:text="${service.company.phoneNumber}">123-456-789</span></p>
             <p><strong th:text="#{service.details.companyDescription} + ':'">Description:</strong> <span th:text="${service.company.description}">Company description here.</span></p>
-            <p><strong>Working Days:</strong>
+            <p><strong th:text="#{working.days}">Working Days:</strong>
             <span th:each="day : ${service.company.workingDays}" th:text="#{${T(java.time.DayOfWeek).of(day).toString().toLowerCase()}}+' '"></span></p>
-            <p><strong>Work Time:</strong> <span th:text="${service.company.workTimeStart + ' - ' + service.company.workTimeEnd}"></span></p>
-            <p><strong>Address:</strong> <span th:text="${service.company.address}">Company Address</span></p>
+            <p><strong th:text="#{work.time} + ':'">Work Time:</strong> <span th:text="${service.company.workTimeStart + ' - ' + service.company.workTimeEnd}"></span></p>
+            <p><strong th:text="#{app.provider.address} + ':'">Address:</strong> <span th:text="${service.company.address}">Company Address</span></p>
         </div>
     </div>
         <a th:href="@{/service/{serviceId}/month/{year}/{month}(serviceId=${service.id}, year=${T(java.time.LocalDate).now().year}, month=${T(java.time.LocalDate).now().monthValue})}"

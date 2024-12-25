@@ -9,9 +9,6 @@ import org.springframework.stereotype.Service
 class CompanyService(
     private val companyRepository: CompanyRepository
 ) {
-    fun findAll(): List<Company>{
-        return companyRepository.findAll()
-    }
     fun findByUserId(userId: Long): Company {
         return companyRepository.findByUsersId(userId)
     }

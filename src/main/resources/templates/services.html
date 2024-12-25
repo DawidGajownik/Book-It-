@@ -15,11 +15,11 @@
     <form method="get" action="/services" id="filterForm">
       <div class="form-group">
         <label for="name" th:text="#{app.services.filter.search}">Name</label>
-        <input type="text" id="name" name="name" th:placeholder="#{app.services.filter.search.placeholder}" oninput="filter()" th:value="${param.name}">
+        <input type="text" id="name" name="name" th:placeholder="#{app.services.filter.search.placeholder}"  oninput="filter()" onchange="filter()" onblur="filter()" th:value="${param.name}">
       </div>
       <div class="form-group">
         <label for="industry" th:text="#{app.services.filter.industry}">Industry</label>
-        <select id="industry" name="industry" multiple onchange="filter()">
+        <select id="industry" name="industry" multiple onchange="filter()" style="height: 250px">
           <option th:each="industry : ${industries}" th:value="${industry.id}" th:text="${industry.name}" th:selected="${param.industry?.contains(industry.id.toString) ?: false}"></option>
         </select>
       </div>
@@ -31,13 +31,13 @@
       </div>
       <div class="form-group">
         <label for="maxDistance" th:text="#{app.services.filter.max_distance}">Max Distance (km)</label>
-        <input type="number" id="maxDistance" name="maxDistance" min="1" placeholder="e.g. 50" onchange="filter()" th:value="${param.maxDistance}">
+        <input type="number" id="maxDistance" name="maxDistance" min="1" placeholder="e.g. 50" oninput="filter()" onchange="filter()" onblur="filter()" th:value="${param.maxDistance}">
       </div>
       <div class="form-group">
         <label for="priceRange" th:text="#{app.services.filter.price}">Price Range</label>
         <div class="price-inputs">
-          <input type="number" id="priceMin" name="priceMin" placeholder="Min" onchange="filter()" th:value="${param.priceMin}">
-          <input type="number" id="priceMax" name="priceMax" placeholder="Max" onchange="filter()" th:value="${param.priceMax}">
+          <input type="number" id="priceMin" name="priceMin" placeholder="Min" onchange="filter()" oninput="filter()" onblur="filter()" th:value="${param.priceMin}">
+          <input type="number" id="priceMax" name="priceMax" placeholder="Max" onchange="filter()" oninput="filter()" onblur="filter()" th:value="${param.priceMax}">
         </div>
       </div>
     </form>

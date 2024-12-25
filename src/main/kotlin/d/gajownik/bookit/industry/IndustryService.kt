@@ -11,13 +11,7 @@ class IndustryService (
     private val industryRepository: IndustryRepository,
     private val googleTranslate: GoogleTranslate
 ){
-    fun findAll(): List<Industry>{
-        return industryRepository.findAll()
-    }
-    fun findById(id: Long): Industry {
-        return industryRepository.findById(id)
-            .orElseThrow { IllegalArgumentException("Industry with ID $id not found") }
-    }
+
     fun findAllAndTranslate(locale: Locale): MutableList<Industry?>? {
 
         if (industryRepository.findAll().size==0){
@@ -38,6 +32,7 @@ class IndustryService (
         }
         return industries
     }
+
     fun copy(industry: Industry): Industry? {
         return industry.name?.let { industry.description?.let { it1 -> Industry(industry.id, it, it1) } }
     }

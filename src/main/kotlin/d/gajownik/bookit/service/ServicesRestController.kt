@@ -12,7 +12,9 @@ import java.util.stream.Collectors
 
 
 @RestController
-class ServicesRestController(private val servicesService: ServicesService) {
+class ServicesRestController(
+    private val servicesService: ServicesService,
+    private val addressService: AddressService) {
 
     @GetMapping("/filter-services")
     fun getServices(model: Model, locale: Locale,
@@ -23,6 +25,7 @@ class ServicesRestController(private val servicesService: ServicesService) {
                     @RequestParam(required = false) priceMin: BigDecimal?,
                     @RequestParam(required = false) priceMax: BigDecimal?,
                     @RequestParam(required = false) sort: String?): MutableList<List<Any?>>? {
-        return servicesService.findAllWithFilters(name, industry, address, maxDistance, priceMin, priceMax, sort, locale).stream().map { service: Service? -> ServiceDTO(service!!) }.map { s -> listOf(s, servicesService.distance(address, s, locale))}.toList()
+
+        return servicesService.findAllWithFilters(name, industry, address, maxDistance, priceMin, priceMax, sort, locale)
     }
 }

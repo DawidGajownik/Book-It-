@@ -140,12 +140,12 @@ class AddressService(
         return formattedAddress.toString()
     }
 
-    private fun haversine(lat1: Double?, lon1: Double?, lat2: Double?, lon2: Double): Double? {
-        if (lat1 == null || lat2 == null) {
+    fun haversine(lat1: Double?, lon1: Double?, lat2: Double?, lon2: Double?): Double? {
+        if (lat1 == null || lat2 == null || lon1 == null || lon2 == null) {
             return null
         }
         val dLat = Math.toRadians(lat2 - lat1)
-        val dLon = Math.toRadians(lon2 - lon1!!)
+        val dLon = Math.toRadians(lon2 - lon1)
 
         val a = sin(dLat / 2) * sin(dLat / 2) +
                 cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) * sin(dLon / 2) * sin(dLon / 2)
@@ -164,17 +164,5 @@ class AddressService(
             addressLongitude = address?.longitude
         }
         return haversine(addressLatitude, addressLongitude, addressFromDb.latitude, addressFromDb.longitude)
-    }
-
-    @Throws(IOException::class)
-    fun distanceCalculateFromCoordinates(latitude: Double, longitude: Double, typedAddress: String, locale: Locale): Double? {
-        var addressLatitude: Double? = null
-        var addressLongitude: Double? = null
-        if (findDataFromString(typedAddress, locale) != null) {
-            val address = findDataFromString(typedAddress, locale)
-            addressLatitude = address?.latitude
-            addressLongitude = address?.longitude
-        }
-        return haversine(addressLatitude, addressLongitude, latitude, longitude)
     }
 }

@@ -90,14 +90,8 @@ class UserController(
     @GetMapping("{employeeId}/employee-day/{year}/{month}/{day}")
     fun employeeDayGet(model: Model, locale:Locale, @PathVariable employeeId: Long, @PathVariable year: Int, @PathVariable month: Int, @PathVariable day: Int): String {
         val company = userService.findByUserId(employeeId).get().company
-        val appointments = appointmentService.findAllByEmployeeIdAndDay(employeeId, LocalDate.of(year, month, day))
-        val appointmentsWithPositionMap = mutableMapOf<Appointment, List<Int>>()
-        for (appointment in appointments) {
-            val top = 60*(appointment.startDateTime.hour-company.workTimeStart.hour)+(appointment.startDateTime.minute-company.workTimeStart.minute)+18
-            val height = (60*(appointment.endDateTime.hour-appointment.startDateTime.hour))+(appointment.endDateTime.minute-appointment.startDateTime.minute)
-            appointmentsWithPositionMap[appointment] = listOf(top, height)
-        }
-        model.addAttribute("appointments", appointmentsWithPositionMap)
+
+        model.addAttribute("appointments", appointmentService.getAppointmentsWithPositionMap(employeeId, year, month, day, company))
         model.addAttribute("company", company)
         model.addAttribute("openingHours", listOf(listOf(
             company.workTimeStart.hour,

@@ -1,7 +1,6 @@
 package d.gajownik.bookit.appointment
 
 import org.springframework.data.jpa.repository.JpaRepository
-import java.time.LocalDate
 import java.time.LocalDateTime
 
 interface AppointmentRepository : JpaRepository<Appointment, Long> {
