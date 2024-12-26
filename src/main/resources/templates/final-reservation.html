@@ -33,8 +33,8 @@
           <div th:if="${service.choosableEmployee}" class="worker-selection">
           <select id="worker" name="employee.id">
             <option th:each="worker : ${users}"
-                    th:value="${worker.id}"
-                    th:text="${worker.username}">
+                    th:value="${worker.key.id}"
+                    th:text="${service.places <=1} ? ${worker.key.username} : ${worker.key.username} + ' - ' + ${worker.value} + '/' + ${service.places} + ' ' + #{places.available}">
             </option>
 
           </select>

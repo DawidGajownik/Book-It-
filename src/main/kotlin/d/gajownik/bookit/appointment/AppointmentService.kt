@@ -21,12 +21,18 @@ class AppointmentService (
     fun findAllByServiceId(serviceId: Long): List<Appointment> {
         return appointmentRepository.findAllByServiceId(serviceId)
     }
+    fun freePlaces(employee: User, places: Int, startDateTime: LocalDateTime): Int {
+        return places - appointmentRepository.countAllByEmployeeIdAndStartDateTime(employee.id, startDateTime)
+    }
     fun appointmentsForRequesterEmployeeAndRequestedTime(employee: User, start: LocalDateTime, end: LocalDateTime, duration: Int, service: d.gajownik.bookit.service.Service): List<Appointment> {
         return appointmentRepository.findAllByEmployeeId(employee.id)
             .filter { s-> !s.startDateTime.isAfter(start.plusMinutes(duration.toLong()).minusNanos(1)) && !s.endDateTime.isBefore(start) && s.endDateTime!=start}
     }
+    fun isThereStillPlaceForThisAppointment(employee: User, start: LocalDateTime, end: LocalDateTime, duration: Int, service: d.gajownik.bookit.service.Service): Boolean {
+        return service.places != appointmentsForRequesterEmployeeAndRequestedTime(employee, start, end, duration, service).filter{s -> s.service == service}.toList().size
+    }
     fun isEmployeeAvailable(employee: User, start: LocalDateTime, end: LocalDateTime, duration: Int, service: d.gajownik.bookit.service.Service): Boolean {
-        return appointmentsForRequesterEmployeeAndRequestedTime(employee, start, end, duration, service).isEmpty()
+        return !isEmployeeScheduledSomewhereElse(employee, start, end, duration, service) && isThereStillPlaceForThisAppointment(employee, start, end, duration, service)
     }
     fun isEmployeeScheduledSomewhereElse(employee: User, start: LocalDateTime, end: LocalDateTime, duration: Int, service: d.gajownik.bookit.service.Service): Boolean {
         return appointmentsForRequesterEmployeeAndRequestedTime(employee,start, end, duration, service).any { s -> s.service != service }

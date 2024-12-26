@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import java.time.*
 import java.time.temporal.ChronoField
 import java.util.*
+import java.util.stream.Collectors
 
 
 @Controller
@@ -94,7 +95,13 @@ class AppointmentController(
         val duration = service.duration
         val endDateTime = startDateTime.plusMinutes(duration.toLong())
 
-        val users: MutableList<User> = service.users.stream().filter{ s->appointmentService.isEmployeeAvailable(s, startDateTime, endDateTime, duration, service) }.toList()
+        val users = service.users
+            .stream()
+            .filter{ s->appointmentService.isEmployeeAvailable(s, startDateTime, endDateTime, duration, service) }
+            .toList()
+            .associateWith { appointmentService.freePlaces(it, service.places, startDateTime) }
+
+
 
         request.session.setAttribute("linkWithHour", request.requestURI.toString())
         model.addAttribute("users", users)
