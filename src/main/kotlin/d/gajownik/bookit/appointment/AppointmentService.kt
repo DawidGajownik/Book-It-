@@ -21,11 +21,15 @@ class AppointmentService (
     fun findAllByServiceId(serviceId: Long): List<Appointment> {
         return appointmentRepository.findAllByServiceId(serviceId)
     }
-    fun isEmployeeAvailable(employee: User, start: LocalDateTime, end: LocalDateTime, duration: Int, service: d.gajownik.bookit.service.Service): Boolean {
-        val appointments = appointmentRepository.findAllByEmployeeId(employee.id)
+    fun appointmentsForRequesterEmployeeAndRequestedTime(employee: User, start: LocalDateTime, end: LocalDateTime, duration: Int, service: d.gajownik.bookit.service.Service): List<Appointment> {
+        return appointmentRepository.findAllByEmployeeId(employee.id)
             .filter { s-> !s.startDateTime.isAfter(start.plusMinutes(duration.toLong()).minusNanos(1)) && !s.endDateTime.isBefore(start) && s.endDateTime!=start}
-            .filter { s-> s.service != service }
-        return appointments.isEmpty()
+    }
+    fun isEmployeeAvailable(employee: User, start: LocalDateTime, end: LocalDateTime, duration: Int, service: d.gajownik.bookit.service.Service): Boolean {
+        return appointmentsForRequesterEmployeeAndRequestedTime(employee, start, end, duration, service).isEmpty()
+    }
+    fun isEmployeeScheduledSomewhereElse(employee: User, start: LocalDateTime, end: LocalDateTime, duration: Int, service: d.gajownik.bookit.service.Service): Boolean {
+        return appointmentsForRequesterEmployeeAndRequestedTime(employee,start, end, duration, service).any { s -> s.service != service }
     }
     fun findAllByEmployeeIdAndDay(employeeId: Long, date: LocalDate): List<Appointment> {
         return appointmentRepository.findAllByEmployeeIdAndStartDateTimeAfterAndEndDateTimeBefore(employeeId, LocalDateTime.of(date, LocalTime.of(0,0)), LocalDateTime.of(date.plusDays(1), LocalTime.of(0,0)))
@@ -38,7 +42,7 @@ class AppointmentService (
         val hourEnd = service.company?.workTimeEnd
         var hourToAdd = LocalTime.of(hourStart?.hour ?: 9, hourStart?.minute ?: 30)
         val availableHours = mutableListOf<LocalTime>()
-        val step = service.duration //bookowanie możliwe co godzine
+        val step = service.duration
         if (hourToAdd != null) {
             while (hourToAdd.plusMinutes(service.duration.toLong())<=(hourEnd)&&hourToAdd.plusMinutes(service.duration.toLong())>=(hourStart)) {
                 availableHours.add(hourToAdd)
@@ -50,10 +54,10 @@ class AppointmentService (
 
     fun getHourlyOccupancy(availableHours: MutableList<LocalTime>, service: d.gajownik.bookit.service.Service, appointments: List<Appointment>, date: LocalDate, i: Int?, weekStart: LocalDate?): Map <LocalTime, Int> {
         val map:MutableMap<LocalTime, Int> = mutableMapOf()
+        val maxThisHour = service.users.size*service.places
         for (element in availableHours) {
             var availability = 0
             var occupancyToReduce =0
-            val maxThisHour = service.users.size*service.places
             var bookedAppointmentsThisHour = appointments
                 .filter { s ->
                     element == LocalTime.of(
@@ -69,7 +73,7 @@ class AppointmentService (
                         }
                     }
                 }
-                if (!isEmployeeAvailable(user, LocalDateTime.of(date, element), LocalDateTime.of(date, element.plusMinutes(service.duration.toLong())), service.duration, service)) {
+                if (isEmployeeScheduledSomewhereElse(user, LocalDateTime.of(date, element), LocalDateTime.of(date, element.plusMinutes(service.duration.toLong())), service.duration, service)) {
                     occupancyToReduce+=service.places
                 }
             }
@@ -82,8 +86,9 @@ class AppointmentService (
 
     fun getMonthOccupancy(month: Int, year: Int, service: d.gajownik.bookit.service.Service, appointments: List<Appointment>) : MutableMap<Int,Int>{
         val map: MutableMap<Int,Int> = mutableMapOf()
+        val availableHours = getAvailableHours(service)
         for (i in 0..<Month.of(month).length(year%4==0)) {
-            val hourlyOccupancy = getHourlyOccupancy(getAvailableHours(service), service, appointments.stream().filter { s -> s.startDateTime.dayOfMonth==i+1}.toList(), LocalDate.of(year, month, i+1), null, null)
+            val hourlyOccupancy = getHourlyOccupancy(availableHours, service, appointments.stream().filter { s -> s.startDateTime.dayOfMonth==i+1}.toList(), LocalDate.of(year, month, i+1), null, null)
             val sum = hourlyOccupancy.values.stream().mapToInt { j:Int -> j }.sum()
             val divisor = hourlyOccupancy.values.stream().count().toInt()
             val occupancy = sum/divisor

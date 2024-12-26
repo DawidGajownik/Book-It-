@@ -32,7 +32,7 @@
         <form th:action="@{/confirm}" method="post">
           <div th:if="${service.choosableEmployee}" class="worker-selection">
           <select id="worker" name="employee.id">
-            <option th:each="worker : ${service.users}"
+            <option th:each="worker : ${users}"
                     th:value="${worker.id}"
                     th:text="${worker.username}">
             </option>

@@ -12,11 +12,9 @@ import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
-import java.time.LocalDate
-import java.time.Month
+import java.time.*
 import java.time.temporal.ChronoField
 import java.util.*
-import java.time.Duration
 
 
 @Controller
@@ -92,7 +90,11 @@ class AppointmentController(
     @GetMapping("service/{serviceId}/time/{year}/{month}/{day}/{hour}")
     fun finalBooking (model: Model, @PathVariable serviceId: Long, @PathVariable year: Int, @PathVariable month: Int, @PathVariable day: Int, @PathVariable hour: String, request: HttpServletRequest): String {
         val service = servicesService.findById(serviceId).get()
-        val users: MutableList<User> = mutableListOf()
+        val startDateTime = LocalDateTime.of(LocalDate.of(year,month,day), LocalTime.parse(hour))
+        val duration = service.duration
+        val endDateTime = startDateTime.plusMinutes(duration.toLong())
+
+        val users: MutableList<User> = service.users.stream().filter{ s->appointmentService.isEmployeeAvailable(s, startDateTime, endDateTime, duration, service) }.toList()
 
         request.session.setAttribute("linkWithHour", request.requestURI.toString())
         model.addAttribute("users", users)
@@ -106,7 +108,7 @@ class AppointmentController(
     @PostMapping("/confirm")
     fun confirmBooking (@ModelAttribute appointment: Appointment, @RequestParam link: String, model: Model): String {
         appointment.client = userService.getUser()!!
-        appointment.endDateTime=appointment.startDateTime
+        appointment.endDateTime=appointment.startDateTime.plusMinutes(servicesService.findById(appointment.service.id).get().duration.toLong())
         if (appointment.employee.id == 0L){
             appointment.employee.id=setEmployee(appointment)
         }
