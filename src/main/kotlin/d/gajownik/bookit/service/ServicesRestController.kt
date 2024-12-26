@@ -13,8 +13,7 @@ import java.util.stream.Collectors
 
 @RestController
 class ServicesRestController(
-    private val servicesService: ServicesService,
-    private val addressService: AddressService) {
+    private val servicesService: ServicesService) {
 
     @GetMapping("/filter-services")
     fun getServices(model: Model, locale: Locale,

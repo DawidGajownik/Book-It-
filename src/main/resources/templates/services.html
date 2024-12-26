@@ -47,9 +47,10 @@
   <!-- Services List -->
   <section class="services-list">
     <div class="sort-buttons">
-      <button th:onclick="sortServices('name')" class="button" th:text="#{app.services.sort.name}">Sort by Name</button>
-      <button th:onclick="sortServices('price')" class="button" th:text="#{app.services.sort.price}">Sort by Price</button>
-      <button th:onclick="sortServices('rating')" class="button" th:text="#{app.services.sort.rating}">Sort by Rating</button>
+      <input type="hidden" id="sort" value="none" name="sort">
+      <button th:onclick="sort('name')" class="button" th:text="#{app.services.sort.name}">Sort by Name</button>
+      <button th:onclick="sort('price')" class="button" th:text="#{app.services.sort.price}">Sort by Price</button>
+      <button th:onclick="sort('distance')" class="button" th:text="#{app.services.sort.distance}">Sort by Rating</button>
     </div>
     <div class="services" id="services">
       <div th:each="service : ${services}" class="service-card">

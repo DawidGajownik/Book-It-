@@ -22,15 +22,22 @@ function processAddress() {
             console.error('Error:', error);
         });
 }
-function sortServices(criteria) {
-    const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set('sort', criteria);
-    window.location.search = urlParams.toString();
-}
 
 function setParam(element, params){
     if(element.value.length>0){
         params.append(element.name, element.value)
+    }
+}
+
+function sort(typeOfSort){
+    const processedAddressOutput = document.getElementById('processedAddress');
+    if (!(typeOfSort==="distance"&&processedAddressOutput.textContent.length===0)){
+        const sort = document.getElementById("sort")
+        if (sort.value===typeOfSort){
+            typeOfSort = typeOfSort+"-desc"
+        }
+        sort.value=typeOfSort
+        filter()
     }
 }
 
@@ -43,6 +50,7 @@ function filter() {
     const maxDistance = document.getElementById("maxDistance")
     const priceMin = document.getElementById("priceMin")
     const priceMax = document.getElementById("priceMax")
+    const sort = document.getElementById("sort")
 
     //collect selected industries
     const selectedIndustries = Array.from(industry.selectedOptions)
@@ -58,6 +66,10 @@ function filter() {
     setParam(maxDistance, params)
     setParam(priceMin, params)
     setParam(priceMax, params)
+    if (sort.value!=="none"){
+        setParam(sort, params)
+    }
+
 
     //filtering
     fetch(`/filter-services?${params.toString()}`)

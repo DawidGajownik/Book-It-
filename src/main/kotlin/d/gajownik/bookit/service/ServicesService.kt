@@ -6,6 +6,7 @@ import org.springframework.context.MessageSource
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.util.*
+import java.util.stream.Stream
 
 @Service
 @Transactional
@@ -36,13 +37,36 @@ class ServicesService(
             latitude = addressObject.latitude
             longitude = addressObject.longitude
         }
-        return serviceRepository.findAll().stream()
+        val beforeSort = serviceRepository.findAll().stream()
             .filter { s -> containsStrings(name, s) }
             .filter { s -> matchesIndustries(industry, s) }
             .filter { s -> (priceMax==null || priceMax.toInt()==0) || s.price<=priceMax }
             .filter { s -> priceMin==null || s.price>=priceMin }
             .map { service: d.gajownik.bookit.service.Service -> ServiceDTO(service) }
             .filter { s -> matchesAddressWithDistance(s.latitude, s.longitude, latitude, longitude, maxDistance, locale) }
+
+        var afterSort: Stream<ServiceDTO> = beforeSort
+
+        if (sort.equals("name")){
+            afterSort = beforeSort.sorted{s1,s2->s1.name.compareTo(s2.name)}
+        }
+        if (sort.equals("price")){
+            afterSort = beforeSort.sorted{s1,s2->s1.price.compareTo(s2.price)}
+        }
+        if (sort.equals("name-desc")){
+            afterSort = beforeSort.sorted{s1,s2->s2.name.compareTo(s1.name)}
+        }
+        if (sort.equals("price-desc")){
+            afterSort = beforeSort.sorted{s1,s2->s2.price.compareTo(s1.price)}
+        }
+        if (sort.equals("distance") && addressObject != null){
+            afterSort = beforeSort.sorted{s1,s2-> addressService.haversine(s1.latitude, s1.longitude, latitude, longitude)!!.compareTo(addressService.haversine(s2.latitude, s2.longitude, latitude, longitude)!!) }
+        }
+        if (sort.equals("distance-desc") && addressObject != null){
+            afterSort = beforeSort.sorted{s1,s2-> addressService.haversine(s2.latitude, s2.longitude, latitude, longitude)!!.compareTo(addressService.haversine(s1.latitude, s1.longitude, latitude, longitude)!!) }
+        }
+
+        return afterSort
             .map { s -> listOf(s, distanceMessage(latitude, longitude, s, locale))}
             .toList()
     }
