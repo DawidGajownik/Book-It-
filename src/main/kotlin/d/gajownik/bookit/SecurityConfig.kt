@@ -20,7 +20,7 @@ class SecurityConfig {
         http
             .authorizeHttpRequests { requests ->
                 requests
-                    .requestMatchers( "/", "/css/**", "/js/**", "/images/**", "/signup", "/provider-signup", "/process", "/service/**", "/services/**", "/filter-services*").permitAll() // Publiczne strony
+                    .requestMatchers( "/", "/css/**", "/js/**", "/images/**", "/signup", "/provider-signup", "/process", "/service/**", "/services/**", "/filter-services*", "/pages").permitAll() // Publiczne strony
                     .anyRequest().authenticated() // Wszystkie inne wymagają zalogowania
             }
             .formLogin { form ->

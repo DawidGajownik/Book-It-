@@ -1,12 +1,14 @@
 package d.gajownik.bookit.service
 
 import d.gajownik.bookit.address.AddressService
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.transaction.Transactional
 import org.springframework.context.MessageSource
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.util.*
 import java.util.stream.Stream
+import kotlin.math.ceil
 
 @Service
 @Transactional
@@ -29,7 +31,7 @@ class ServicesService(
         return serviceRepository.findById(id)
     }
 
-    fun findAllWithFilters(name: String?, industry: List<Long>?, address: String?, maxDistance: Number?, priceMin: BigDecimal?, priceMax: BigDecimal?, sort: String?, locale: Locale): MutableList<List<Any?>>? {
+    fun findAllWithFilters(name: String?, industry: List<Long>?, address: String?, maxDistance: Number?, priceMin: BigDecimal?, priceMax: BigDecimal?, sort: String?, page: Int, locale: Locale, request: HttpServletRequest): MutableList<List<Any?>>? {
         val addressObject = addressService.findDataFromString(address, locale)
         var latitude: Double? = null
         var longitude: Double? = null
@@ -65,7 +67,15 @@ class ServicesService(
         if (sort.equals("distance-desc") && addressObject != null){
             afterSort = beforeSort.sorted{s1,s2-> addressService.haversine(s2.latitude, s2.longitude, latitude, longitude)!!.compareTo(addressService.haversine(s1.latitude, s1.longitude, latitude, longitude)!!) }
         }
-
+        val tempForPages = afterSort.toList()
+        val size = tempForPages.size
+        val pages = ceil((size.toDouble()/9))
+        request.session.setAttribute("pages-quantity", pages)
+        if (page!=0){
+            afterSort = tempForPages.stream().skip(((page-1)*9).toLong()).limit(9)
+        } else {
+            afterSort = tempForPages.stream()
+        }
         return afterSort
             .map { s -> listOf(s, distanceMessage(latitude, longitude, s, locale))}
             .toList()

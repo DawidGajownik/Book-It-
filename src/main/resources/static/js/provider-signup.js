@@ -1,3 +1,132 @@
+const pageInput = document.getElementById('page');
+const pagesQuantity = document.getElementById('pagesQuantity')
+
+
+function getPages() {
+    fetch('/pages')
+        .then(response => response.text())
+        .then(pagesQ => {
+            pagesQuantity.value=pagesQ
+            if (pageInput.value>pagesQuantity.value){
+                pageInput.value=pagesQuantity.value
+                filter()
+            }
+            console.log(pageInput.value)
+            console.log(pagesQuantity.value)
+            pageButtonGenerate(pagesQ)
+        })
+        .catch(error => {
+            console.error('gettingPages:', error);
+        });
+}
+
+function pageButtonGenerate(pages){
+    const pageButtonsDiv = document.getElementById("pages")
+    const pageButtons = document.getElementsByName("page-nr");
+    let firstButtonValueDistraction = -2
+    let pagesButtons = pages
+    if (pages>5){
+        pagesButtons=5
+    }
+    pageButtonsDiv.innerHTML=''
+    // if (pageInput.value>pagesQuantity.value){
+    //     pageInput.value=pagesQuantity.value
+    // }
+    const firstPageButton = document.createElement('button')
+    firstPageButton.classList.add('button')
+    firstPageButton.onclick = function () {
+        page(1);
+    };
+    firstPageButton.innerText='First page'
+    pageButtonsDiv.appendChild(firstPageButton)
+
+    const previousPageButton = document.createElement('button')
+    previousPageButton.classList.add('button')
+    previousPageButton.onclick = function () {
+        page('prev');
+    };
+    previousPageButton.innerText='Previous page'
+    pageButtonsDiv.appendChild(previousPageButton)
+
+    for (let i = 1; i <= pagesButtons ; i++) {
+        const button = document.createElement('button')
+        button.classList.add('button')
+        button.name='page-nr'
+        button.style.width='10%'
+        button.onclick = function () {
+            page(i);
+        };
+        pageButtonsDiv.appendChild(button)
+    }
+
+    const nextPageButton = document.createElement('button')
+    nextPageButton.classList.add('button')
+    nextPageButton.onclick = function () {
+        page('next');
+    };
+    nextPageButton.innerText='Next page'
+    pageButtonsDiv.appendChild(nextPageButton)
+
+    const lastPageButton = document.createElement('button')
+    lastPageButton.classList.add('button')
+    lastPageButton.onclick = function () {
+        page('last');
+    };
+    lastPageButton.innerText='Last page'
+    pageButtonsDiv.appendChild(lastPageButton)
+
+    if (pageInput.value==1){
+        firstButtonValueDistraction=0
+    }
+    if (pageInput.value==2){
+        firstButtonValueDistraction=-1
+    }
+    if(pages>4){
+        if (pageInput.value==pages){
+            firstButtonValueDistraction=-4
+        }
+        if (pageInput.value==pages-1){
+            firstButtonValueDistraction=-3
+        }
+    }
+
+    for (let i = 0; i < pageButtons.length; i++) {
+        const nr = parseInt(pageInput.value)+firstButtonValueDistraction+i
+        pageButtons[i].innerText=nr
+    }
+    pageButtons.forEach(button => {
+        if(pageInput.value===button.textContent){
+            button.style.backgroundColor = "coral"
+            button.style.fontWeight = "bold"
+            button.disabled = true
+        } else {
+            button.style.backgroundColor = ""
+            button.style.fontWeight = ""
+            button.disabled = false
+        }
+    })
+}
+
+
+function page(page){
+    if(page=='last'){
+        pageInput.value=pagesQuantity.value
+    }
+    else if(page=='next'){
+        if (pageInput.value<pagesQuantity.value){
+            pageInput.value=parseInt(pageInput.value)+1
+        }
+    }
+    else if(page=='prev'){
+        if(pageInput.value>1){
+            pageInput.value=parseInt(pageInput.value)-1
+        }
+    } else {
+        pageInput.value=page
+    }
+    filter()
+}
+
 function processAddress() {
     const addressInput = document.getElementById('address');
     const processedAddressOutput = document.getElementById('processedAddress');
@@ -31,7 +160,7 @@ function setParam(element, params){
 
 function sort(typeOfSort){
     const processedAddressOutput = document.getElementById('processedAddress');
-    if (!(typeOfSort==="distance"&&processedAddressOutput.textContent.length===0)){
+    if (!(typeOfSort==="distance"&&(processedAddressOutput.textContent.length===0||processedAddressOutput.textContent===(document.getElementById("addressNotFound").textContent)))){
         const sort = document.getElementById("sort")
         if (sort.value===typeOfSort){
             typeOfSort = typeOfSort+"-desc"
@@ -41,7 +170,7 @@ function sort(typeOfSort){
     }
 }
 
-function filter() {
+function filter(x) {
 
     //html elements
     const name = document.getElementById("name")
@@ -51,6 +180,7 @@ function filter() {
     const priceMin = document.getElementById("priceMin")
     const priceMax = document.getElementById("priceMax")
     const sort = document.getElementById("sort")
+
 
     //collect selected industries
     const selectedIndustries = Array.from(industry.selectedOptions)
@@ -69,10 +199,12 @@ function filter() {
     if (sort.value!=="none"){
         setParam(sort, params)
     }
+    params.append("page", pageInput.value)
 
 
     //filtering
     fetch(`/filter-services?${params.toString()}`)
+
         .then(response => {
             if (!response.ok) {
                 throw new Error('Error processing search');
@@ -80,6 +212,7 @@ function filter() {
             return response.json();
         })
         .then(services => {
+            getPages()
             const servicesList = window.services;
             servicesList.innerHTML = ''; // Wyczyść istniejący HTML
             services.forEach(service => {
@@ -100,6 +233,7 @@ function filter() {
                     `;
                 servicesList.appendChild(serviceDiv);
             });
+
         })
         .catch(error => {
             console.error('Error fetching services:', error);
