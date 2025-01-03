@@ -71,7 +71,7 @@ BookIt! is a user-friendly service booking application that helps users discover
 
 ## Screenshots
 
-(src/main/resources/screenshots/Zrzut%20ekranu%202024-12-20%20173454.png)
+![Zrzut ekranu 2024-12-20 173454](src/main/resources/screenshots/Zrzut%20ekranu%202024-12-20%20173454.png)
 (src/main/resources/screenshots/Zrzut%20ekranu%202025-01-03%20083630.png)
 (src/main/resources/screenshots/Zrzut%20ekranu%202025-01-03%20083703.png)
 (src/main/resources/screenshots/Zrzut%20ekranu%202025-01-03%20083754.png)
