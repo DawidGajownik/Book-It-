@@ -71,41 +71,16 @@ BookIt! is a user-friendly service booking application that helps users discover
 
 ## Screenshots
 
-### Zrzut ekranu 1
-![Zrzut ekranu 2024-12-20 173454](src/main/resources/screenshots/Zrzut%20ekranu%202024-12-20%20173454.png)
-
-### Zrzut ekranu 2
-![Zrzut ekranu 2025-01-03 083630](screenshots/Zrzut%20ekranu%202025-01-03%20083630.png)
-
-### Zrzut ekranu 3
-![Zrzut ekranu 2025-01-03 083703](screenshots/Zrzut%20ekranu%202025-01-03%20083703.png)
-
-### Zrzut ekranu 4
-![Zrzut ekranu 2025-01-03 083754](screenshots/Zrzut%20ekranu%202025-01-03%20083754.png)
-
-### Zrzut ekranu 5
-![Zrzut ekranu 2025-01-03 083851](screenshots/Zrzut%20ekranu%202025-01-03%20083851.png)
-
-### Zrzut ekranu 6
-![Zrzut ekranu 2025-01-03 083959](screenshots/Zrzut%20ekranu%202025-01-03%20083959.png)
-
-### Zrzut ekranu 7
-![Zrzut ekranu 2025-01-03 084036](screenshots/Zrzut%20ekranu%202025-01-03%20084036.png)
-
-### Zrzut ekranu 8
-![Zrzut ekranu 2025-01-03 084058](screenshots/Zrzut%20ekranu%202025-01-03%20084058.png)
-
-### Zrzut ekranu 9
-![Zrzut ekranu 2025-01-03 084121](screenshots/Zrzut%20ekranu%202025-01-03%20084121.png)
-
-### Zrzut ekranu 10
-![Zrzut ekranu 2025-01-03 084132](screenshots/Zrzut%20ekranu%202025-01-03%20084132.png)
-
-### Zrzut ekranu 11
-![Zrzut ekranu 2025-01-03 084145](screenshots/Zrzut%20ekranu%202025-01-03%20084145.png)
-
-### Zrzut ekranu 12
-![Zrzut ekranu 2025-01-03 084206](screenshots/Zrzut%20ekranu%202025-01-03%20084206.png)
-
-### Zrzut ekranu 13
-![Zrzut ekranu 2025-01-03 084219](screenshots/Zrzut%20ekranu%202025-01-03%20084219.png)
+(src/main/resources/screenshots/Zrzut%20ekranu%202024-12-20%20173454.png)
+(src/main/resources/screenshots/Zrzut%20ekranu%202025-01-03%20083630.png)
+(src/main/resources/screenshots/Zrzut%20ekranu%202025-01-03%20083703.png)
+(src/main/resources/screenshots/Zrzut%20ekranu%202025-01-03%20083754.png)
+(src/main/resources/screenshots/Zrzut%20ekranu%202025-01-03%20083851.png)
+(src/main/resources/screenshots/Zrzut%20ekranu%202025-01-03%20083959.png)
+(src/main/resources/screenshots/Zrzut%20ekranu%202025-01-03%20084036.png)
+(src/main/resources/screenshots/Zrzut%20ekranu%202025-01-03%20084058.png)
+(src/main/resources/screenshots/Zrzut%20ekranu%202025-01-03%20084121.png)
+(src/main/resources/screenshots/Zrzut%20ekranu%202025-01-03%20084132.png)
+(src/main/resources/screenshots/Zrzut%20ekranu%202025-01-03%20084145.png)
+(src/main/resources/screenshots/Zrzut%20ekranu%202025-01-03%20084206.png)
+(src/main/resources/screenshots/Zrzut%20ekranu%202025-01-03%20084219.png)
