@@ -69,11 +69,16 @@ class UserController(
     @PostMapping("/provider-signup")
     fun providerSignupPost(@ModelAttribute user: User, @RequestParam address: String, locale: Locale): String {
         val addressFull = addressService.findDataFromString(address, locale)
-        if (addressFull != null) {
-            addressRepository.save(addressFull)
-            user.company.address=addressFull
+        val company = user.company
+        if (company != null) {
+            if (addressFull != null) {
+                addressRepository.save(addressFull)
+                company.address=addressFull
+                companyService.save(company)
+            }
+            company.users.add(user)
         }
-        user.company.users.add(user)
+
 //        val industry = requireNotNull(user.company.industry) { "Industry cannot be null" }
 //
 //        val industryId = requireNotNull(industry.id) { "Industry ID cannot be null" }
@@ -87,18 +92,26 @@ class UserController(
     fun signupSuccess(): String {
         return "signup-success"
     }
-    @GetMapping("{employeeId}/employee-day/{year}/{month}/{day}")
-    fun employeeDayGet(model: Model, locale:Locale, @PathVariable employeeId: Long, @PathVariable year: Int, @PathVariable month: Int, @PathVariable day: Int): String {
-        val company = userService.findByUserId(employeeId).get().company
+    @GetMapping("employee-dashboard")
+    fun employeeDashboard(model: Model): String {
+        val employee = userService.getUser()
+        return "employee dashboard"
+    }
 
-        model.addAttribute("appointments", appointmentService.getAppointmentsWithPositionMap(employeeId, year, month, day, company))
-        model.addAttribute("company", company)
-        model.addAttribute("openingHours", listOf(listOf(
-            company.workTimeStart.hour,
-            company.workTimeStart.minute),
-            listOf(
-            company.workTimeEnd.hour),
-            company.workTimeEnd.minute))
+    @GetMapping("employee-day/{year}/{month}/{day}")
+    fun employeeDayGet(model: Model, locale:Locale, @PathVariable year: Int, @PathVariable month: Int, @PathVariable day: Int): String {
+        val employee = userService.getUser()
+        val company = userService.findByUserId(employee.id).get().company
+        if (company != null) {
+            model.addAttribute("appointments", appointmentService.getAppointmentsWithPositionMap(employee.id, year, month, day, company))
+            model.addAttribute("company", company)
+            model.addAttribute("openingHours", listOf(listOf(
+                company.workTimeStart.hour,
+                company.workTimeStart.minute),
+                listOf(
+                    company.workTimeEnd.hour),
+                company.workTimeEnd.minute))
+        }
         return "employee-day"
     }
 }

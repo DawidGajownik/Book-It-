@@ -15,8 +15,10 @@ class CompanyController(
     @GetMapping("/dashboard")
     fun company(model: Model): String {
         val user = userService.getUser()
-        val company = companyService.findByUserId(user!!.id)
-        model.addAttribute("services", servicesService.findAllByCompanyId(company.id))
+        val company = companyService.findById(user.company!!.id)
+        val users = userService.findAllByCompanyId(company.get().id)
+        model.addAttribute("users", users)
+        model.addAttribute("services", servicesService.findAllByCompanyId(company.get().id))
         return "company"
     }
 }

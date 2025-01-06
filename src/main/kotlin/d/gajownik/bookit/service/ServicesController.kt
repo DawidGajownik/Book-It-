@@ -32,6 +32,7 @@ class ServicesController(
     @GetMapping("services/add/{companyId}")
     fun addService(model: Model, locale: Locale, @PathVariable companyId:Long): String {
         val service: Service? = null
+        model.addAttribute("industries", industryService.findAllAndTranslate(locale))
         model.addAttribute("service", service)
         model.addAttribute("users", userService.findAllByCompanyId(companyId))
         return "service-add"

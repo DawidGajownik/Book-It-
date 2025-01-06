@@ -1,6 +1,7 @@
 package d.gajownik.bookit.service
 
 import d.gajownik.bookit.company.Company
+import d.gajownik.bookit.industry.Industry
 import d.gajownik.bookit.user.User
 import jakarta.persistence.*
 import lombok.NoArgsConstructor
@@ -45,5 +46,8 @@ data class Service(
     var company: Company? = null, // Wiele usług może być powiązanych z jedną firmą
 
     var places: Int = 0,
-    var choosableEmployee: Boolean = false
+    var choosableEmployee: Boolean = false,
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    var industry: MutableList<Industry> = mutableListOf(),
 )

@@ -7,7 +7,7 @@ import jakarta.persistence.*
 import java.time.LocalTime
 
 @Entity
-data class Company (
+data class Company(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,19 +32,14 @@ data class Company (
     @Column(nullable = false)
     var phoneNumber: String = "",
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-        name = "company_users",
-        joinColumns = [JoinColumn(name = "company_id")],
-        inverseJoinColumns = [JoinColumn(name = "user_id")]
-    )
+    @OneToMany(mappedBy = "company", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     var users: MutableList<User> = mutableListOf(),
 
     @ManyToMany(fetch = FetchType.LAZY)
     var industry: MutableList<Industry> = mutableListOf(),
 
-    var workTimeStart: LocalTime = LocalTime.of(9,0),
-    var workTimeEnd: LocalTime = LocalTime.of(17,0),
+    var workTimeStart: LocalTime = LocalTime.of(9, 0),
+    var workTimeEnd: LocalTime = LocalTime.of(17, 0),
 
     @ElementCollection
     @Column(nullable = false)

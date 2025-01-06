@@ -100,8 +100,8 @@ class ServicesService(
         if (industries.isNullOrEmpty()) {
             return true
         }
-        val serviceIndustries = service.company?.industry
-        for (serviceIndustry in serviceIndustries!!) {
+        val serviceIndustries = service.industry
+        for (serviceIndustry in serviceIndustries) {
             for (industry in industries) {
                 if (serviceIndustry.id == industry) {
                     return true

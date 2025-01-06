@@ -23,7 +23,7 @@ class UserService(
     fun findByUserId(userId: Long): Optional<User> {
         return userRepository.findById(userId)
     }
-    fun getUser(): User? {
+    fun getUser(): User {
         val authentication: Authentication = SecurityContextHolder.getContext().authentication
         val username: String = authentication.name
         val user = userRepository.findByUsername(username)

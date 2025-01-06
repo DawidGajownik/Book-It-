@@ -129,7 +129,10 @@ class AppointmentController(
     }
     fun getEmployeeDayOccupancy(employee: User, date: LocalDate): Int {
         val company = employee.company
-        val workDuration = Duration.between(company.workTimeStart, company.workTimeEnd).toMinutes().toInt()
+        var workDuration = 0
+        if (company!=null){
+            workDuration = Duration.between(company.workTimeStart, company.workTimeEnd).toMinutes().toInt()
+        }
         val employeeAppointmentsThisDay = appointmentService.findAllByEmployeeIdAndDay(employee.id, date)
         val takenTime = employeeAppointmentsThisDay.sumOf { s -> Duration.between(s.startDateTime, s.endDateTime).toMinutes() }.toInt()
         if (takenTime==0){

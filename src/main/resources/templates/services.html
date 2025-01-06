@@ -57,15 +57,6 @@
     </div>
     <div class="sort-buttons" id="pages">
 
-<!--      <button onclick="page(1)" class="button" th:text="#{first.page}">First page</button>-->
-<!--      <button onclick="page('prev')" class="button" th:text="#{previous.page}">Previous page</button>-->
-<!--      <button onclick="page(this.innerText)" class="button" name="page-nr" style="width: 10%">1</button>-->
-<!--      <button onclick="page(this.innerText)" class="button" name="page-nr" style="width: 10%">2</button>-->
-<!--      <button onclick="page(this.innerText)" class="button" name="page-nr" style="width: 10%">3</button>-->
-<!--      <button onclick="page(this.innerText)" class="button" name="page-nr" style="width: 10%">4</button>-->
-<!--      <button onclick="page(this.innerText)" class="button" name="page-nr" style="width: 10%">5</button>-->
-<!--      <button onclick="page('next')" class="button" th:text="#{next.page}">Next page</button>-->
-<!--      <button onclick="page('last')" class="button" th:text="#{last.page}">Last page</button>-->
     </div>
 
     <div class="services" id="services">
@@ -92,6 +83,10 @@
   window.services=document.getElementById("services")
   const currency = /*[[#{app.currency}]]*/ "a"
   const details = /*[[#{app.services.details}]]*/ "a"
+  const firstPage = /*[[#{first.page}]]*/ 'First page';
+  const previousPage = /*[[#{previous.page}]]*/ 'First page';
+  const nextPage = /*[[#{next.page}]]*/ 'First page';
+  const lastPage = /*[[#{last.page}]]*/ 'First page';
 </script>
 <script src="/js/provider-signup.js"></script>
 

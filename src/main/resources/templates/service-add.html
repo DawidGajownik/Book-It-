@@ -52,6 +52,15 @@
             </select>
         </div>
 
+        <div class="form-group">
+            <label for="industries" th:text="#{industries}">Required Employees</label>
+            <select id="industries" name="industries" multiple>
+                <option th:each="industry : ${industries}"
+                        th:value="${industry.id}"
+                        th:text="${industry.name}">Industry</option>
+            </select>
+        </div>
+
         <!-- Choosable Employee -->
         <div class="form-group">
             <label for="choosableEmployee" th:text="#{app.service.choosable_employee}">Choosable Employee</label>

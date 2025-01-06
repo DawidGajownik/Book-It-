@@ -2,6 +2,7 @@ const pageInput = document.getElementById('page');
 const pagesQuantity = document.getElementById('pagesQuantity')
 
 
+//getting available pages
 function getPages() {
     fetch('/pages')
         .then(response => response.text())
@@ -11,8 +12,6 @@ function getPages() {
                 pageInput.value=pagesQuantity.value
                 filter()
             }
-            console.log(pageInput.value)
-            console.log(pagesQuantity.value)
             pageButtonGenerate(pagesQ)
         })
         .catch(error => {
@@ -21,23 +20,28 @@ function getPages() {
 }
 
 function pageButtonGenerate(pages){
+
     const pageButtonsDiv = document.getElementById("pages")
     const pageButtons = document.getElementsByName("page-nr");
+
+    //default pages buttons quantity = 5, with chosen page in the middle of buttons; first button distraction = -2
     let firstButtonValueDistraction = -2
     let pagesButtons = pages
     if (pages>5){
         pagesButtons=5
     }
+
+    //cleaning buttons
     pageButtonsDiv.innerHTML=''
-    // if (pageInput.value>pagesQuantity.value){
-    //     pageInput.value=pagesQuantity.value
-    // }
+
+
+    //first and previous buttons
     const firstPageButton = document.createElement('button')
     firstPageButton.classList.add('button')
     firstPageButton.onclick = function () {
         page(1);
     };
-    firstPageButton.innerText='First page'
+    firstPageButton.innerText=firstPage
     pageButtonsDiv.appendChild(firstPageButton)
 
     const previousPageButton = document.createElement('button')
@@ -45,26 +49,27 @@ function pageButtonGenerate(pages){
     previousPageButton.onclick = function () {
         page('prev');
     };
-    previousPageButton.innerText='Previous page'
+    previousPageButton.innerText=previousPage
     pageButtonsDiv.appendChild(previousPageButton)
 
+
+    //numeric buttons, quantity depends on pages quantity, max = 5
     for (let i = 1; i <= pagesButtons ; i++) {
         const button = document.createElement('button')
         button.classList.add('button')
         button.name='page-nr'
         button.style.width='10%'
-        button.onclick = function () {
-            page(i);
-        };
         pageButtonsDiv.appendChild(button)
     }
 
+
+    //next/last buttons
     const nextPageButton = document.createElement('button')
     nextPageButton.classList.add('button')
     nextPageButton.onclick = function () {
         page('next');
     };
-    nextPageButton.innerText='Next page'
+    nextPageButton.innerText=nextPage
     pageButtonsDiv.appendChild(nextPageButton)
 
     const lastPageButton = document.createElement('button')
@@ -72,15 +77,26 @@ function pageButtonGenerate(pages){
     lastPageButton.onclick = function () {
         page('last');
     };
-    lastPageButton.innerText='Last page'
+    lastPageButton.innerText=lastPage
     pageButtonsDiv.appendChild(lastPageButton)
 
+
+    //changing first button distraction depending on chosen page
+    //if prev search has 0 result and 0 pages it changes value to 1
+    if (pageInput.value==0){
+        pageInput.value=1
+    }
+
+    //if we are on page 1 we don't want page -2 and -1
     if (pageInput.value==1){
         firstButtonValueDistraction=0
     }
+    //similar
     if (pageInput.value==2){
         firstButtonValueDistraction=-1
     }
+
+    //last and pre-last pages
     if(pages>4){
         if (pageInput.value==pages){
             firstButtonValueDistraction=-4
@@ -90,10 +106,17 @@ function pageButtonGenerate(pages){
         }
     }
 
+
+    //innertext for all buttons, and function with argument
     for (let i = 0; i < pageButtons.length; i++) {
-        const nr = parseInt(pageInput.value)+firstButtonValueDistraction+i
-        pageButtons[i].innerText=nr
+        pageButtons[i].innerText=parseInt(pageInput.value) + firstButtonValueDistraction + i
+        pageButtons[i].onclick = function () {
+            page(pageButtons[i].innerText);
+        };
     }
+
+
+    //disabling active page button
     pageButtons.forEach(button => {
         if(pageInput.value===button.textContent){
             button.style.backgroundColor = "coral"

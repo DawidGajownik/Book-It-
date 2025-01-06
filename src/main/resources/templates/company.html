@@ -10,12 +10,18 @@
 <body>
 <div th:insert="elements/navbar"></div>
 
-<div class="container">
+<div class="hero" style="background: whitesmoke; height: auto; align-items: flex-start; color: #333333">
+
+    <aside class="section" style="width: 15%">
+        <a href="/dashboard" class="button" th:text="#{company.dashboard}"></a><br><br>
+        <a href="/employee-dashboard" class="button" th:text="#{employee.dashboard}"></a><br><br>
+        <a href="/user-dashboard" class="button" th:text="#{user.dashboard}"></a>
+    </aside>
     <!-- Zarządzanie usługami -->
     <div class="section">
         <div class="section-header">
             <h2 th:text="#{app.moderator.manage_services}">Manage Services</h2>
-            <a th:href="@{/services/add/{id}(id=${companyId})}" class="button" th:text="#{app.moderator.add_service}">Add Service</a>
+            <a th:href="@{/services/add/{id}(id=${users[0].company.id})}" class="button" th:text="#{app.moderator.add_service}">Add Service</a>
         </div>
         <form method="post" th:action="@{/services/update}">
 
@@ -69,6 +75,32 @@
 
     <!-- Zapraszanie użytkowników -->
     <div class="section">
+
+        <table>
+            <thead>
+            <tr>
+                <th th:text="#{app.services.filter.name}" style="width: 12%">Name</th>
+                <th th:text="#{app.email}" style="width: 25%">Email</th>
+                <th th:text="#{app.services.details}">Choosable Employee</th>
+                <th th:text="#{app.service.delete}">Choosable Employee</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.username}"></td>
+                <td th:text="${user.email}"></td>
+                <td>
+                    <a th:href="@{/user/details/{id}(id=${user.id})}" class="button" style="background-color: #2196f3;"
+                    >...</a>
+                </td>
+                <td>
+                    <a th:href="@{/user/delete/{id}(id=${user.id})}" class="button" style="background-color: #f44336;"
+                    >X</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
         <h2 th:text="#{app.moderator.invite_users}">Invite Users</h2>
         <form method="post" th:action="@{/moderator/invite}">
             <label for="email" th:text="#{app.user.email}">User Email</label>
