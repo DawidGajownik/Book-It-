@@ -6,112 +6,101 @@
     <title th:text="#{app.moderator.title}">Moderator Panel</title>
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/company.css">
+    <link rel="stylesheet" href="/css/month.css">
 </head>
+<style>
+    .chat-container {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 1rem;
+    }
+
+    .chat-box {
+        display: flex;
+        flex-direction: column;
+        height: 400px;
+    }
+
+    .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        padding: 1rem;
+        border-radius: 5px;
+        margin-bottom: 1rem;
+    }
+
+    .chat-input {
+        display: flex;
+    }
+
+    .chat-input input {
+        flex: 1;
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 5px 0 0 5px;
+    }
+
+    .chat-input button {
+        padding: 0.5rem 1rem;
+        background: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 0 5px 5px 0;
+    }
+</style>
 <body>
 <div th:insert="elements/navbar"></div>
 
 <div class="hero" style="background: whitesmoke; height: auto; align-items: flex-start; color: #333333">
 
-    <section class="section" style="width: 200%">
+    <section class="section" style="width: 20%">
         <div th:insert="elements/dashboard"></div>
     </section>
     <!-- Zarządzanie usługami -->
-    <div class="section">
-        <div class="section-header">
-            <h2 th:text="#{app.moderator.manage_services}">Manage Services</h2>
-            <a th:href="@{/services/add/{id}(id=${users[0].company.id})}" class="button" th:text="#{app.moderator.add_service}">Add Service</a>
-        </div>
-        <form method="post" th:action="@{/services/update}">
-
-            <table>
-                <thead>
-                <tr>
-                    <th th:text="#{app.service.name}" style="width: 12%">Name</th>
-                    <th th:text="#{app.service.duration}" style="width: 7%">Duration (min)</th>
-                    <th th:text="#{app.service.price}" style="width: 11%">Price</th>
-                    <th th:text="#{app.service.description}" style="width: 40%">Description</th>
-                    <th th:text="#{app.service.places}" style="width: 7%">Places</th>
-                    <th th:text="#{app.service.required_employees}" style="width: 15%">Required Employees</th>
-                    <th th:text="#{app.service.choosable_employee}" style="width: 7%">Choosable Employee</th>
-                    <th th:text="#{app.service.delete}">Choosable Employee</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="service : ${services}">
-                    <td><input type="text" name="name" th:value="${service.name}"></td>
-                    <td><input type="number" name="duration" th:value="${service.duration}"></td>
-                    <td><input type="number" step="0.01" name="price" th:value="${service.price}"></td>
-                    <td><input type="text" name="description" th:value="${service.description}"></td>
-                    <td><input type="number" name="places" th:value="${service.places}"></td>
-                    <td>
-                        <select name="requiredEmployees" multiple>
-                            <option th:each="user : ${service.company.users}"
-                                    th:value="${user.id}"
-                                    th:selected="${service.users.contains(user)}"
-                                    th:text="${user.username}">Employee</option>
-                        </select>
-                    </td>
-                    <td>
-                        <select name="choosableEmployee">
-                            <option value="true" th:selected="${service.choosableEmployee}" th:text="#{yes}">Yes</option>
-                            <option value="false" th:selected="${!service.choosableEmployee}" th:text="#{no}">No</option>
-                        </select>
-                    </td>
-                    <td>
-                        <a th:href="@{/services/delete/{id}(id=${service.id})}" class="button" style="background-color: #f44336;"
-                        >X</a>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            <div style="text-align: right;">
-                <button type="submit" class="button" th:text="#{app.save_changes}">Save Changes</button>
+    <section class="section" style="width: 90%">
+        <div class="calendar-container" style="width: 90%">
+            <div class="calendar-header">
+                <button onclick="prevYear()">← year</button>
+                <h1 id="currentYear"></h1>
+                <button onclick="nextYear()">→ year</button>
             </div>
-        </form>
+            <div class="calendar-header">
+                <button onclick="prevMonth()">← month</button>
+                <h2 id="currentMonth"></h2>
+                <button onclick="nextMonth()">→ month</button>
+            </div>
 
-    </div>
+            <div class="calendar-grid">
+                <div></div> <!-- Placeholder for week numbers -->
+                <div class="day-header">Mon</div>
+                <div class="day-header">Tue</div>
+                <div class="day-header">Wed</div>
+                <div class="day-header">Thu</div>
+                <div class="day-header">Fri</div>
+                <div class="day-header">Sat</div>
+                <div class="day-header">Sun</div>
+            </div>
+
+            <div id="calendarDays" class="calendar-grid"></div>
+        </div>
+
+    </section>
 
     <!-- Zapraszanie użytkowników -->
-    <div class="section">
-
-        <table>
-            <thead>
-            <tr>
-                <th th:text="#{app.services.filter.name}" style="width: 12%">Name</th>
-                <th th:text="#{app.email}" style="width: 25%">Email</th>
-                <th th:text="#{app.services.details}">Choosable Employee</th>
-                <th th:text="#{app.service.delete}">Choosable Employee</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="user : ${users}">
-                <td th:text="${user.username}"></td>
-                <td th:text="${user.email}"></td>
-                <td>
-                    <a th:href="@{/user/details/{id}(id=${user.id})}" class="button" style="background-color: #2196f3;"
-                    >...</a>
-                </td>
-                <td>
-                    <a th:href="@{/user/delete/{id}(id=${user.id})}" class="button" style="background-color: #f44336;"
-                    >X</a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-
-        <h2 th:text="#{app.moderator.invite_users}">Invite Users</h2>
-        <label for="email" th:text="#{app.user.email}">User Email</label>
-        <input type="email" id="email" name="email" placeholder="example@example.com" required>
-        <p id="emailMessage"></p>
-
-        <label for="role" th:text="#{app.user.role}">Role</label>
-        <select id="role" name="role">
-            <option value="ROLE_EMPLOYEE" th:text="#{app.role.employee}">Employee</option>
-            <option value="ROLE_MODERATOR" th:text="#{app.role.moderator}">Moderator</option>
-        </select>
-
-        <button th:onclick="invite()" class="button" th:text="#{app.moderator.send_invitation}">Send Invitation</button>
-    </div>
+    <section class="chat-container">
+        <h2>Chat</h2>
+        <div class="chat-box">
+            <div class="chat-messages">
+                <!-- Messages go here -->
+            </div>
+            <form class="chat-input">
+                <input type="text" placeholder="Type a message..." required>
+                <button type="submit">Send</button>
+            </form>
+        </div>
+    </section>
 </div>
 <div th:insert="elements/footer"></div>
 
@@ -143,4 +132,13 @@
         email.value=''
     }
 </script>
+<script th:inline="javascript">
+    window.translations = { week: /*[[#{calendar.week}]]*/ 'Week' };
+    window.serviceId = /*[[${serviceId}]]*/ 12;
+    window.month = /*[[${month}]]*/ 1;
+    window.year = /*[[${year}]]*/ 2025;
+    window.monthName = /*[[${monthName}]]*/ "January";
+    window.occupation = /*[[${occupation}]]*/ {1: 20, 2: 50, 3: 70};
+</script>
+<script src="/js/month.js"></script>
 </html>

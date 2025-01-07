@@ -34,12 +34,6 @@ class UserController(
         model.addAttribute("link", link)
         return "login"
     }
-//    @PostMapping("/login")
-//    fun loginPost(request: HttpServletRequest): String {
-//        val link = request.session.getAttribute("linkWithHour") as? String
-//        request.session.removeAttribute("linkWithHour")
-//        return "redirect:/services"
-//    }
 
     @GetMapping("/logout")
     fun logout(request: HttpServletRequest, response: HttpServletResponse): String {
