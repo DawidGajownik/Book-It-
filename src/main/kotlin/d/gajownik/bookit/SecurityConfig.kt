@@ -3,11 +3,14 @@ package d.gajownik.bookit
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 
 @Configuration
+@EnableWebSecurity
+
 class SecurityConfig {
 
     @Bean
@@ -20,7 +23,8 @@ class SecurityConfig {
         http
             .authorizeHttpRequests { requests ->
                 requests
-                    .requestMatchers( "/", "/css/**", "/js/**", "/images/**", "/signup", "/provider-signup", "/process", "/service/**", "/services/**", "/filter-services*", "/pages").permitAll() // Publiczne strony
+                    .requestMatchers( "/", "/css/**", "/js/**", "/images/**", "/signup", "/provider-signup", "/process", "/service/**", "/services/**", "/filter-services*", "/pages", "/accept-invitation").permitAll() // Publiczne strony
+                    .requestMatchers("/invite").hasRole("PROVIDER")
                     .anyRequest().authenticated() // Wszystkie inne wymagają zalogowania
             }
             .formLogin { form ->

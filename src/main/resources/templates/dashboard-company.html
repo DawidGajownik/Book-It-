@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="#{app.moderator.title}">Moderator Panel</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/company.css">
+</head>
+<body>
+<div th:insert="elements/navbar"></div>
+
+<div class="hero" style="background: whitesmoke; height: auto; align-items: flex-start; color: #333333">
+    <section class="section" style="width: 25%">
+    <div th:insert="elements/dashboard"></div>
+<div style="padding-top: 10%">
+    <form th:action="@{/company/update}" th:object="${company}" method="post">
+
+        <div class="form">
+            <div class="form-group">
+                <label for="name" th:text="#{app.provider.company_name}">Company Name</label>
+                <input type="text" id="name" name="name" th:field="*{name}" required>
+            </div>
+            <div class="form-group">
+                <label for="tax-id" th:text="#{app.provider.tax_id}">Tax ID (NIP)</label>
+                <input type="text" id="tax-id" name="taxId" th:field="*{taxId}" required>
+            </div>
+            <div class="form-group" >
+                <label for="address" th:text="#{app.provider.address}">Address</label>
+                <input type="text" id="address" name="address" th:field="*{address.addressAsString}" required onblur="processAddress()">
+            </div>
+            <div class="form-group">
+                <label for="phone" th:text="#{app.provider.phone}">Phone Number</label>
+                <input type="tel" id="phone" name="phone" th:field="*{phoneNumber}"  required>
+            </div>
+            <div class="form-group">
+                <label for="work-time-start" th:text="#{work.time.start}">Otwarte od:</label>
+                <input type="time" id="work-time-start" name="work-time-start" th:value="${workTimeStart}">
+            </div>
+            <div class="form-group">
+                <label for="work-time-end" th:text="#{work.time.end}">Otwarte do:</label>
+                <input type="time" id="work-time-end" name="work-time-end" th:value="${workTimeEnd}">
+            </div>
+            <div class="form-group">
+                <label for="working-days" th:text="#{working.days}">Otwarte w</label>
+                <select id="working-days" name="working-days" th:field="*{workingDays}" multiple>
+                    <option th:text="#{monday}" th:value=1>pon</option>
+                    <option th:text="#{tuesday}" th:value=2>wt</option>
+                    <option th:text="#{wednesday}" th:value=3>sr</option>
+                    <option th:text="#{thursday}" th:value=4>cz</option>
+                    <option th:text="#{friday}" th:value=5>pt</option>
+                    <option th:text="#{saturday}" th:value=6>sob</option>
+                    <option th:text="#{sunday}" th:value=7>ndz</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="company-description" th:text="#{app.provider.company_description}">Company Description</label>
+            <textarea id="company-description" name="company-description" th:field="*{description}" rows="5" cols="30" required></textarea>
+        </div>
+        <p id="processedAddress" style="color: green" ></p>
+        <button type="submit" class="button" th:text="#{app.save_changes}">Register as Provider</button>
+    </form>
+</div>
+
+
+    </section>
+    <!-- Zarządzanie usługami -->
+    <div class="section">
+        <div class="section-header">
+            <h2 th:text="#{app.moderator.manage_services}">Manage Services</h2>
+            <a th:href="@{/services/add/{id}(id=${users[0].company.id})}" class="button" th:text="#{app.moderator.add_service}">Add Service</a>
+        </div>
+        <form method="post" th:action="@{/services/update}">
+
+        <table>
+            <thead>
+            <tr>
+                <th th:text="#{app.service.name}" style="width: 12%">Name</th>
+                <th th:text="#{app.service.duration}" style="width: 7%">Duration (min)</th>
+                <th th:text="#{app.service.price}" style="width: 11%">Price</th>
+                <th th:text="#{app.service.description}" style="width: 40%">Description</th>
+                <th th:text="#{app.service.places}" style="width: 7%">Places</th>
+                <th th:text="#{app.service.required_employees}" style="width: 15%">Required Employees</th>
+                <th th:text="#{app.service.choosable_employee}" style="width: 7%">Choosable Employee</th>
+                <th th:text="#{app.service.delete}">Choosable Employee</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="service : ${services}">
+                <td><input type="text" name="name" th:value="${service.name}"></td>
+                <td><input type="number" name="duration" th:value="${service.duration}"></td>
+                <td><input type="number" step="0.01" name="price" th:value="${service.price}"></td>
+                <td><input type="text" name="description" th:value="${service.description}"></td>
+                <td><input type="number" name="places" th:value="${service.places}"></td>
+                <td>
+                    <select name="requiredEmployees" multiple>
+                        <option th:each="user : ${service.company.users}"
+                                th:value="${user.id}"
+                                th:selected="${service.users.contains(user)}"
+                                th:text="${user.username}">Employee</option>
+                    </select>
+                </td>
+                <td>
+                    <select name="choosableEmployee">
+                        <option value="true" th:selected="${service.choosableEmployee}" th:text="#{yes}">Yes</option>
+                        <option value="false" th:selected="${!service.choosableEmployee}" th:text="#{no}">No</option>
+                    </select>
+                </td>
+                <td>
+                    <a th:href="@{/services/delete/{id}(id=${service.id})}" class="button" style="background-color: #f44336;"
+                       >X</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div style="text-align: right;">
+            <button type="submit" class="button" th:text="#{app.save_changes}">Save Changes</button>
+        </div>
+        </form>
+
+    </div>
+
+    <!-- Zapraszanie użytkowników -->
+    <div class="section">
+        <h2 th:text="#{users}">Users</h2>
+        <table>
+            <thead>
+            <tr>
+                <th th:text="#{app.services.filter.name}" style="width: 12%">Name</th>
+                <th th:text="#{app.email}" style="width: 25%">Email</th>
+                <th th:text="#{app.role.moderator}">Moderator</th>
+                <th th:text="#{app.services.details}">Choosable Employee</th>
+                <th th:text="#{app.service.delete}">Choosable Employee</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.username}"></td>
+                <td th:text="${user.email}"></td>
+
+                <td>
+                    <a th:if="${user.roles.contains('ROLE_MODERATOR')&&!user.roles.contains('ROLE_PROVIDER')}" th:href="@{/user/take/{id}(id=${user.id})}" class="button" style="background-color: #2196f3;"
+                    >✓</a>
+                    <a th:if="${!user.roles.contains('ROLE_MODERATOR')&&!user.roles.contains('ROLE_PROVIDER')}" th:href="@{/user/give/{id}(id=${user.id})}" class="button" style="background-color: #f44336;"
+                    >X</a>
+
+                </td>
+                <td>
+                    <a th:href="@{/user/details/{id}(id=${user.id})}" class="button" style="background-color: #2196f3;"
+                    >...</a>
+                </td>
+                <td>
+                    <a th:href="@{/user/delete/{id}(id=${user.id})}" class="button" style="background-color: #f44336;"
+                    >X</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <h2 th:text="#{app.moderator.invite_users}">Invite</h2>
+
+            <label for="email" th:text="#{app.user.email}">User Email</label>
+            <input type="email" id="email" name="email" placeholder="example@example.com" required>
+        <p id="emailMessage"></p>
+
+            <label for="role" th:text="#{app.user.role}">Role</label>
+            <select id="role" name="role">
+                <option value="ROLE_EMPLOYEE" th:text="#{app.role.employee}">Employee</option>
+                <option value="ROLE_MODERATOR" th:text="#{app.role.moderator}">Moderator</option>
+            </select>
+
+            <button th:onclick="invite()" class="button" th:text="#{app.moderator.send_invitation}">Send Invitation</button>
+    </div>
+</div>
+<div th:insert="elements/footer"></div>
+
+</body>
+<script th:inline="javascript">
+
+    const emailWrong = /*[[#{email.wrong}]]*/ "a"
+    const invitationSent = /*[[#{invitation.sent}]]*/ "a"
+
+    function validateEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    function invite() {
+        const role = document.getElementById("role")
+        const email = document.getElementById("email")
+        const emailMessage = document.getElementById("emailMessage")
+        if (validateEmail(email.value)){
+            emailMessage.innerText=invitationSent+' '+email.value
+            emailMessage.style.color="green"
+            fetch('/invite?email='+email.value+'&role='+role.value)
+        }
+        else {
+            emailMessage.style.color="red"
+            emailMessage.innerText=emailWrong
+        }
+
+        email.value=''
+    }
+</script>
+</html>

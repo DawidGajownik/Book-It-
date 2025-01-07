@@ -166,4 +166,7 @@ class AppointmentService (
         }
         return appointmentsWithPositionMap
     }
+    fun findAllByEmployeeId(employeeId: Long) : List<Appointment>{
+        return appointmentRepository.findAllByEmployeeId(employeeId)
+    }
 }

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="${#locale.language}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${user.company.name}+' '+#{invites.to.sign.up}">Book It! - Sign Up</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div th:insert="elements/navbar"></div>
+
+<div class="hero">
+
+    <div class="hero-text">
+        <h2 th:text="#{sign.up.and.join}+' '+${user.company.name}">Sign Up for an Account</h2>
+        <p th:text="${user.company.name}+' '+#{invites.to.sign.up}">Create your account and start booking appointments.</p>
+    </div>
+    <div class="container">
+        <div class="login-form" style="width: 50vh " >
+            <h3 th:text="#{sign.up.and.join}+' '+${user.company.name}">Sign Up</h3>
+            <form th:action="@{/signup}" method="post">
+                <input type="hidden" id="roles" name="roles" th:value="${user.roles}">
+                <input type="hidden" id="company" name="company" th:value="${user.company.id}">
+                <input type="hidden" name="email" th:value="${user.email}">
+
+                <div class="form-group">
+                    <label for="username" th:text="#{app.username}">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="email" th:text="#{app.email}">Email</label>
+                    <input type="email" id="email" name="email_display" th:value="${user.email}" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="password" th:text="#{app.password}">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password" th:text="#{app.confirm_password}">Confirm Password</label>
+                    <input type="password" id="confirm-password" name="confirm-password" required>
+                </div>
+                <button type="submit" class="button" th:text="#{app.signup_button}">Sign Up</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<section id="signup">
+
+</section>
+
+<div th:insert="elements/footer"></div>
+
+</body>
+</html>

@@ -49,5 +49,10 @@ data class Service(
     var choosableEmployee: Boolean = false,
 
     @ManyToMany(fetch = FetchType.LAZY)
-    var industry: MutableList<Industry> = mutableListOf(),
+    @JoinTable(
+        name = "service_industry",
+        joinColumns = [JoinColumn(name = "service_id")],
+        inverseJoinColumns = [JoinColumn(name = "industry_id")]
+    )
+    var industries: MutableList<Industry> = mutableListOf(),
 )

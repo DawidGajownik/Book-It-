@@ -1,6 +1,7 @@
 package d.gajownik.bookit.user
 
 import d.gajownik.bookit.company.Company
+import d.gajownik.bookit.service.Service
 import jakarta.persistence.*
 
 @Entity
@@ -17,4 +18,12 @@ data class User(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", referencedColumnName = "id")
     var company: Company? = null,
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "service_users",
+        joinColumns = [JoinColumn(name = "user_id")],
+        inverseJoinColumns = [JoinColumn(name = "service_id")]
+    )
+    var services: MutableList<Service> = mutableListOf(), // Wiele użytkowników może być przypisanych do jednej usługi
 )

@@ -1,0 +1,4 @@
+
+    <a th:if="${roles.contains('PROVIDER')}" href="/company-dashboard" class="button" th:text="#{company.dashboard}"></a><br><br>
+    <a th:if="${roles.contains('EMPLOYEE')}" href="/employee-dashboard" class="button" th:text="#{employee.dashboard}"></a><br><br>
+    <a th:if="${roles.contains('USER')}" href="/user-dashboard" class="button" th:text="#{user.dashboard}"></a>

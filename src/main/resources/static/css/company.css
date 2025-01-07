@@ -4,12 +4,22 @@ body {
     margin: 0;
     padding: 0;
 }
-
+.hero {
+    background: url('/images/img.png');
+    background-size: cover;
+    gap: 1rem; /* Odstęp między elementami */
+    height: 85vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    padding: 0 1rem;
+}
 .container {
     display: flex;
     flex-direction: column;
     gap: 2rem;
-    max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
 }
@@ -21,8 +31,7 @@ h1 {
 
 .section {
     border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 1.5rem;
+    padding: 1rem;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
@@ -64,7 +73,7 @@ table th {
     color: #333;
 }
 
-form input, form select {
+input, select {
     padding: 0.5rem;
     border: 1px solid #ccc;
     border-radius: 5px;

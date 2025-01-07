@@ -24,4 +24,7 @@ data class Address (
     override fun toString(): String {
         return city+", "+postalCode+", "+administrative_area_level_1+", "+administrative_area_level_2+", "+country
     }
+    fun getAddressAsString(): String {
+        return toString()
+    }
 }

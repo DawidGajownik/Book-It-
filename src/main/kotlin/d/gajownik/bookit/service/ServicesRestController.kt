@@ -1,11 +1,9 @@
 package d.gajownik.bookit.service
 
-import com.sun.jdi.IntegerValue
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RestController
 import java.math.BigDecimal
 import java.util.*
