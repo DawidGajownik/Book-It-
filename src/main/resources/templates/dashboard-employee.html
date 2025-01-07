@@ -7,56 +7,29 @@
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="/css/company.css">
     <link rel="stylesheet" href="/css/month.css">
+
+    <link rel="stylesheet" href="/css/chat.css">
+    <link rel="stylesheet" href="/css/employee-day.css">
 </head>
-<style>
-    .chat-container {
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        padding: 1rem;
-    }
-
-    .chat-box {
-        display: flex;
-        flex-direction: column;
-        height: 400px;
-    }
-
-    .chat-messages {
-        flex: 1;
-        overflow-y: auto;
-        border: 1px solid #ddd;
-        padding: 1rem;
-        border-radius: 5px;
-        margin-bottom: 1rem;
-    }
-
-    .chat-input {
-        display: flex;
-    }
-
-    .chat-input input {
-        flex: 1;
-        padding: 0.5rem;
-        border: 1px solid #ddd;
-        border-radius: 5px 0 0 5px;
-    }
-
-    .chat-input button {
-        padding: 0.5rem 1rem;
-        background: #4CAF50;
-        color: white;
-        border: none;
-        border-radius: 0 5px 5px 0;
-    }
-</style>
 <body>
 <div th:insert="elements/navbar"></div>
 
 <div class="hero" style="background: whitesmoke; height: auto; align-items: flex-start; color: #333333">
 
-    <section class="section" style="width: 20%">
-        <div th:insert="elements/dashboard"></div>
+    <section class="section" style="width: 30%">
+        <div th:insert="elements/dashboard" style="padding-bottom: 10%"></div>
+        <section class="chat-container">
+            <h2>Chat</h2>
+            <div class="chat-box">
+                <div class="chat-messages">
+                    <!-- Messages go here -->
+                </div>
+                <form class="chat-input">
+                    <input type="text" placeholder="Type a message..." required>
+                    <button type="submit">Send</button>
+                </form>
+            </div>
+        </section>
     </section>
     <!-- Zarządzanie usługami -->
     <section class="section" style="width: 90%">
@@ -87,58 +60,51 @@
         </div>
 
     </section>
-
-    <!-- Zapraszanie użytkowników -->
-    <section class="chat-container">
-        <h2>Chat</h2>
-        <div class="chat-box">
-            <div class="chat-messages">
-                <!-- Messages go here -->
-            </div>
-            <form class="chat-input">
-                <input type="text" placeholder="Type a message..." required>
-                <button type="submit">Send</button>
-            </form>
+<section class="section">
+    <div class="schedule-container">
+        <!-- Godziny otwarcia -->
+        <div class="schedule" id="schedule">
+            <div class="hour" style="height: 1px"></div>
+            <div th:each="hour : ${#numbers.sequence(company.workTimeStart.hour, company.workTimeEnd.hour - 1)}"
+                 class="hour" th:data-hour="${hour}" th:text="${hour + ':00'}">9:00</div>
         </div>
-    </section>
+
+        <!-- Bloki spotkań -->
+        <div class="blocks" id="blocks">
+<!--            <div th:each="appointment : ${appointments}"-->
+<!--                 class="block"-->
+<!--                 th:data-id="1"-->
+<!--                 th:style="'top: ' + ${appointment.value[0]} + 'px; height: ' + ${appointment.value[1]} + 'px;'">-->
+<!--                 th:text="${appointment.key.service.name} +' ' + ${appointment.key.startDateTime.hour + ':' + (appointment.key.startDateTime.minute < 10 ? '0' : '') + appointment.key.startDateTime.minute} + ' - ' + ${appointment.key.endDateTime.hour + ':' + (appointment.key.endDateTime.minute < 10 ? '0' : '') + appointment.key.endDateTime.minute}">-->
+<!--            </div>-->
+        </div>
+        <button class="button" id="save-button">Save Changes</button>
+
+    </div>
+</section>
 </div>
 <div th:insert="elements/footer"></div>
 
 </body>
 <script th:inline="javascript">
-
-    const emailWrong = /*[[#{email.wrong}]]*/ "a"
-    const invitationSent = /*[[#{invitation.sent}]]*/ "a"
-
-    function validateEmail(email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    }
-
-    function invite() {
-        const role = document.getElementById("role")
-        const email = document.getElementById("email")
-        const emailMessage = document.getElementById("emailMessage")
-        if (validateEmail(email.value)){
-            emailMessage.innerText=invitationSent+' '+email.value
-            emailMessage.style.color="green"
-            fetch('/invite?email='+email.value+'&role='+role.value)
-        }
-        else {
-            emailMessage.style.color="red"
-            emailMessage.innerText=emailWrong
-        }
-
-        email.value=''
-    }
-</script>
-<script th:inline="javascript">
+    window.openingHours = /*[[${openingHours}]]*/ [[1,2],[3,4]]
     window.translations = { week: /*[[#{calendar.week}]]*/ 'Week' };
-    window.serviceId = /*[[${serviceId}]]*/ 12;
     window.month = /*[[${month}]]*/ 1;
     window.year = /*[[${year}]]*/ 2025;
-    window.monthName = /*[[${monthName}]]*/ "January";
-    window.occupation = /*[[${occupation}]]*/ {1: 20, 2: 50, 3: 70};
+    window.january = /*[[#{january}]]*/ 'January';
+    window.february = /*[[#{february}]]*/ 'February';
+    window.march = /*[[#{march}]]*/ 'March';
+    window.april = /*[[#{april}]]*/ 'April';
+    window.may = /*[[#{may}]]*/ 'May';
+    window.june = /*[[#{june}]]*/ 'June';
+    window.july = /*[[#{july}]]*/ 'July';
+    window.august = /*[[#{august}]]*/ 'August';
+    window.september = /*[[#{september}]]*/ 'September';
+    window.october = /*[[#{october}]]*/ 'October';
+    window.november = /*[[#{november}]]*/ 'November';
+    window.december = /*[[#{december}]]*/ 'December';
+
 </script>
-<script src="/js/month.js"></script>
+<script src="/js/dashboard-employee.js"></script>
+<!--<script src="/js/employee-day.js"></script>-->
 </html>

@@ -30,7 +30,7 @@ class AppointmentController(
         val service = serviceOptional.get()
         val appointments = appointmentService.findAllByServiceId(serviceId).filter { s->s.startDateTime.year==year && s.startDateTime.monthValue==month}
 
-        model.addAttribute("occupation",appointmentService.getMonthOccupancy(month, year, service, appointments))
+        model.addAttribute("occupation", servicesService.getMonthOccupancy(month, year, service, appointments))
         model.addAttribute("serviceId", serviceId)
         model.addAttribute("year", year)
         model.addAttribute("month", month-1)
@@ -44,7 +44,7 @@ class AppointmentController(
 
         val serviceOptional = servicesService.findById(serviceId)
         val service = serviceOptional.get()
-        val availableHours = appointmentService.getAvailableHours(service)
+        val availableHours = servicesService.getAvailableHours(service)
         val selectedDate: LocalDate = LocalDate.of(year, 1, 1).plusWeeks(week.toLong()-1)
         val weekStart: LocalDate = selectedDate.with(ChronoField.DAY_OF_WEEK, 1) // Poniedziałek
         val weekEnd: LocalDate = weekStart.plusDays(6) // Niedziela
@@ -57,7 +57,7 @@ class AppointmentController(
             return "redirect:service/${serviceId}/week/${weekEnd.year}/1"
         }
 
-        model.addAttribute("occupation", appointmentService.getWeekOccupancy(availableHours, service, appointments, weekStart))
+        model.addAttribute("occupation", servicesService.getWeekOccupancy(availableHours, service, appointments, weekStart))
         model.addAttribute("serviceId", serviceId)
         model.addAttribute("year", year)
         model.addAttribute("weekStart", weekStart)
@@ -73,11 +73,11 @@ class AppointmentController(
 
         val serviceOptional = servicesService.findById(serviceId)
         val service = serviceOptional.get()
-        val availableHours = appointmentService.getAvailableHours(service)
+        val availableHours = servicesService.getAvailableHours(service)
         val appointments = appointmentService.findAllByServiceId(serviceId).filter { s -> s.startDateTime.toLocalDate().equals(LocalDate.of(year, month, day)) }
 
         model.addAttribute("serviceName",servicesService.findById(serviceId).get().name)
-        model.addAttribute("occupation",appointmentService.getHourlyOccupancy(availableHours, service, appointments, LocalDate.of(year, month, day),null, null))
+        model.addAttribute("occupation",servicesService.getHourlyOccupancy(availableHours, service, appointments, LocalDate.of(year, month, day),null, null))
         model.addAttribute("serviceId", serviceId)
         model.addAttribute("week", appointmentService.getWeekNumber(year, month, day))
         model.addAttribute("year", year)
@@ -95,7 +95,7 @@ class AppointmentController(
         val endDateTime = startDateTime.plusMinutes(duration.toLong())
 
         request.session.setAttribute("linkWithHour", request.requestURI.toString())
-        model.addAttribute("users", appointmentService.getAvailableUsers(service, startDateTime, endDateTime, duration))
+        model.addAttribute("users", servicesService.getAvailableUsers(service, startDateTime, endDateTime, duration))
         model.addAttribute("selectedTime", hour)
         model.addAttribute("monthName",Month.of(month).name.lowercase())
         model.addAttribute("service", service)

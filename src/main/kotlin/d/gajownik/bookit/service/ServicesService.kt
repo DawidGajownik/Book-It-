@@ -1,11 +1,18 @@
 package d.gajownik.bookit.service
 
 import d.gajownik.bookit.address.AddressService
+import d.gajownik.bookit.appointment.Appointment
+import d.gajownik.bookit.appointment.AppointmentService
+import d.gajownik.bookit.user.User
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.transaction.Transactional
 import org.springframework.context.MessageSource
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.Month
 import java.util.*
 import java.util.stream.Stream
 import kotlin.math.ceil
@@ -15,7 +22,8 @@ import kotlin.math.ceil
 class ServicesService(
     private val serviceRepository: ServiceRepository,
     private val addressService: AddressService,
-    private val messageSource: MessageSource
+    private val messageSource: MessageSource,
+    private val appointmentService: AppointmentService
 )
 {
 
@@ -129,5 +137,80 @@ class ServicesService(
             }
         }
         return true
+    }
+
+    fun getAvailableUsers(service: d.gajownik.bookit.service.Service, startDateTime: LocalDateTime, endDateTime: LocalDateTime, duration: Int): Map<User, Int> {
+        return service.users
+            .stream()
+            .filter{ s->appointmentService.isEmployeeAvailable(s, startDateTime, endDateTime, duration, service) }
+            .toList()
+            .associateWith { appointmentService.freePlaces(it, service.places, startDateTime) }
+    }
+    fun getAvailableHours(service: d.gajownik.bookit.service.Service): MutableList<LocalTime> {
+        val hourStart = service.company?.workTimeStart
+        val hourEnd = service.company?.workTimeEnd
+        var hourToAdd = LocalTime.of(hourStart?.hour ?: 9, hourStart?.minute ?: 30)
+        val availableHours = mutableListOf<LocalTime>()
+        val step = service.duration
+        if (hourToAdd != null) {
+            while (hourToAdd.plusMinutes(service.duration.toLong())<=(hourEnd)&&hourToAdd.plusMinutes(service.duration.toLong())>=(hourStart)) {
+                availableHours.add(hourToAdd)
+                hourToAdd = hourToAdd.plusMinutes(step.toLong())
+            }
+        }
+        return availableHours
+    }
+
+    fun getHourlyOccupancy(availableHours: MutableList<LocalTime>, service: d.gajownik.bookit.service.Service, appointments: List<Appointment>, date: LocalDate, i: Int?, weekStart: LocalDate?): Map <LocalTime, Int> {
+        val map:MutableMap<LocalTime, Int> = mutableMapOf()
+        val maxThisHour = service.users.size*service.places
+        for (element in availableHours) {
+            var availability = 0
+            var occupancyToReduce =0
+            var bookedAppointmentsThisHour = appointments
+                .filter { s ->
+                    element == LocalTime.of(
+                        s.startDateTime.hour,
+                        s.startDateTime.minute
+                    )
+                }
+            for (user in service.users) {
+                if (i!=null) {
+                    if (weekStart != null) {
+                        bookedAppointmentsThisHour = bookedAppointmentsThisHour.filter { s ->
+                            weekStart.plusDays(i.toLong()) == s.startDateTime.toLocalDate()
+                        }
+                    }
+                }
+                if (appointmentService.isEmployeeScheduledSomewhereElse(user, LocalDateTime.of(date, element), LocalDateTime.of(date, element.plusMinutes(service.duration.toLong())), service.duration, service)) {
+                    occupancyToReduce+=service.places
+                }
+            }
+            val bookedThisHour = bookedAppointmentsThisHour.count()+occupancyToReduce
+            availability = bookedThisHour*100/maxThisHour
+            map[element] = availability
+        }
+        return map
+    }
+
+    fun getMonthOccupancy(month: Int, year: Int, service: d.gajownik.bookit.service.Service, appointments: List<Appointment>) : MutableMap<Int,Int>{
+        val map: MutableMap<Int,Int> = mutableMapOf()
+        val availableHours = getAvailableHours(service)
+        for (i in 0..<Month.of(month).length(year%4==0)) {
+            val hourlyOccupancy = getHourlyOccupancy(availableHours, service, appointments.stream().filter { s -> s.startDateTime.dayOfMonth==i+1}.toList(), LocalDate.of(year, month, i+1), null, null)
+            val sum = hourlyOccupancy.values.stream().mapToInt { j:Int -> j }.sum()
+            val divisor = hourlyOccupancy.values.stream().count().toInt()
+            val occupancy = sum/divisor
+            map[i + 1] = occupancy
+        }
+        return map
+    }
+
+    fun getWeekOccupancy(availableHours: MutableList<LocalTime>, service: d.gajownik.bookit.service.Service, appointments: List<Appointment>, weekStart: LocalDate): MutableList<Map<LocalTime, Int>> {
+        val occupation: MutableList<Map<LocalTime,Int>> = mutableListOf()
+        for (i in 0..6) {
+            occupation.add(getHourlyOccupancy(availableHours, service, appointments, weekStart.plusDays(i.toLong()), i, weekStart))
+        }
+        return occupation
     }
 }

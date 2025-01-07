@@ -1,6 +1,5 @@
 package d.gajownik.bookit.service
 
-import d.gajownik.bookit.address.Address
 import java.math.BigDecimal
 
 class ServiceDTO(service: Service) {

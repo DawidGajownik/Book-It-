@@ -24,4 +24,5 @@ data class Appointment(
     var startDateTime: LocalDateTime = LocalDateTime.now(),
 
     var endDateTime: LocalDateTime = LocalDateTime.now()
+
 )

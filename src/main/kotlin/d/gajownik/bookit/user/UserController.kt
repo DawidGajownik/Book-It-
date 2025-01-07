@@ -6,15 +6,21 @@ import d.gajownik.bookit.address.AddressService
 import d.gajownik.bookit.appointment.AppointmentService
 import d.gajownik.bookit.company.CompanyService
 import d.gajownik.bookit.industry.IndustryService
+import d.gajownik.bookit.service.ServicesService
 import d.gajownik.bookit.token.JwtUtil
 import io.jsonwebtoken.security.SignatureException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.context.MessageSource
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.Month
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.jvm.Throws
 
@@ -25,7 +31,9 @@ class UserController(
     private val addressService: AddressService,
     private val addressRepository: AddressRepository,
     private val appointmentService: AppointmentService,
-    private val companyService: CompanyService
+    private val companyService: CompanyService,
+    private val servicesService: ServicesService,
+    private val messageSource: MessageSource
 ) {
 
 
@@ -104,7 +112,7 @@ class UserController(
         val employee = userService.getUser()
         val company = userService.findByUserId(employee.id).get().company
         if (company != null) {
-            model.addAttribute("appointments", appointmentService.getAppointmentsWithPositionMap(employee.id, year, month, day, company))
+            model.addAttribute("appointments", appointmentService.getAppointmentsWithPositionMap(employee, year, month, day, company))
             model.addAttribute("company", company)
             model.addAttribute("openingHours", listOf(listOf(
                 company.workTimeStart.hour,
@@ -114,5 +122,60 @@ class UserController(
                 company.workTimeEnd.minute))
         }
         return "employee-day"
+    }
+
+    @GetMapping("/dashboard")
+    fun company(model: Model): String {
+        val user = userService.getUser()
+        if (user.roles.contains("PROVIDER")) {
+            return "redirect:/company-dashboard"
+        }
+        if (user.roles.contains("MODERATOR")) {
+            return "redirect:/moderator-dashboard"
+        }
+        if (user.roles.contains("EMPLOYEE")) {
+            return "redirect:/employee-dashboard"
+        }
+        return "redirect:/user-dashboard"
+    }
+    @GetMapping("/company-dashboard")
+    fun companyDashboard(model: Model, locale: Locale): String {
+        val user = userService.getUser()
+        val company = companyService.findById(user.company!!.id).get()
+        val users = userService.findAllByCompanyId(company.id)
+
+        val formattedWorkTimeStart: String = company.workTimeStart.format(DateTimeFormatter.ofPattern("HH:mm"))
+        val formattedWorkTimeEnd: String = company.workTimeEnd.format(DateTimeFormatter.ofPattern("HH:mm"))
+        model.addAttribute("workTimeStart", formattedWorkTimeStart)
+        model.addAttribute("workTimeEnd", formattedWorkTimeEnd)
+
+        model.addAttribute("company", company)
+        model.addAttribute("roles", user.roles)
+        model.addAttribute("users", users)
+        model.addAttribute("services", servicesService.findAllByCompanyId(company.id))
+        return "dashboard-company"
+    }
+    @GetMapping("/employee-dashboard")
+    fun employeeDashboard(model: Model, locale: Locale): String {
+        val user = userService.getUser()
+        val date = LocalDateTime.now()
+        val month = date.monthValue
+        val year = date.year
+        val company = companyService.findById(user.company!!.id).get()
+
+        model.addAttribute("openingHours", listOf(listOf(
+            company.workTimeStart.hour,
+            company.workTimeStart.minute),
+            listOf(
+                company.workTimeEnd.hour),
+            company.workTimeEnd.minute))
+        model.addAttribute("appointments", appointmentService.getAppointmentsWithPositionMap(user, year, month, 1, company))
+        model.addAttribute("company", companyService.findByUserId(user.id))
+        model.addAttribute("year", year)
+        model.addAttribute("month", month-1)
+        model.addAttribute("monthName",messageSource.getMessage(Month.of(month).name.lowercase(), null, locale))
+        model.addAttribute("occupation",userService.getMonthOccupancy(month, year, user))
+        model.addAttribute("roles", user.roles)
+        return "dashboard-employee"
     }
 }

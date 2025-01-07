@@ -1,11 +1,9 @@
 
-document.addEventListener("DOMContentLoaded", () => {
-    const blocks = document.querySelectorAll(".block");
+   // const blocks = document.querySelectorAll(".block");
     const hourHeight = 60; // Height in pixels for one hour block
     const quarterHeight = hourHeight / 4; // 15-minute interval height
     const scheduleContainer = document.getElementById("schedule")
     const scheduleTop = document.querySelector(".blocks").getBoundingClientRect().top;
-    console.log(scheduleContainer)
     const scheduleHeight = (scheduleContainer.children.length-1) * hourHeight; // 9 hours from 9:00 to 17:00
     let dragOffsetY = 0;
     let currentBlock = null;
@@ -65,40 +63,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return newTop
     };
 
-    // Make blocks draggable
-    blocks.forEach(block => {
-        block.addEventListener("mousedown", (e) => {
-            currentBlock = block;
-            dragOffsetY = e.clientY - block.getBoundingClientRect().top;
-            block.classList.add("dragging");
-        });
-
-        document.addEventListener("mousemove", (e) => {
-            if (currentBlock) {
-                let newTop = e.clientY - scheduleTop - dragOffsetY;
-                const height = currentBlock.style.height
-                // Snap to 15-minute intervals and limit position
-                newTop = snapToInterval(newTop, height);
-                newTop = limitPosition(newTop, parseInt(height));
-
-                if (!isOverlapping(currentBlock, newTop, parseInt(height))) {
-
-                    currentBlock.style.top = `${newTop}px`;
-                    currentBlock.classList.remove("overlap");
-                } else {
-                    currentBlock.classList.add("overlap");
-                }
-            }
-        });
-
-        document.addEventListener("mouseup", (e) => {
-            if (currentBlock) {
-                currentBlock.classList.remove("dragging");
-                currentBlock = null;
-            }
-        });
-    });
-
     // Save changes
     document.getElementById("save-button").addEventListener("click", () => {
         const updatedBlocks = Array.from(blocks).map(block => {
@@ -126,6 +90,36 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 alert("Failed to update schedule.");
             }
-        });
     });
 });
+function makeBlockDraggable(block) {
+    block.addEventListener("mousedown", (e) => {
+        currentBlock = block;
+        dragOffsetY = e.clientY - block.getBoundingClientRect().top;
+        block.classList.add("dragging");
+    });
+
+    document.addEventListener("mousemove", (e) => {
+        if (currentBlock) {
+            let newTop = e.clientY - scheduleTop - dragOffsetY;
+            const height = currentBlock.style.height;
+            // Snap to 15-minute intervals and limit position
+            newTop = snapToInterval(newTop, height);
+            newTop = limitPosition(newTop, parseInt(height));
+
+            if (!isOverlapping(currentBlock, newTop, parseInt(height))) {
+                currentBlock.style.top = `${newTop}px`;
+                currentBlock.classList.remove("overlap");
+            } else {
+                currentBlock.classList.add("overlap");
+            }
+        }
+    });
+
+    document.addEventListener("mouseup", () => {
+        if (currentBlock) {
+            currentBlock.classList.remove("dragging");
+            currentBlock = null;
+        }
+    });
+}
