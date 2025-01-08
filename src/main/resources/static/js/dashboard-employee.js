@@ -3,13 +3,15 @@ const translations = window.translations || {week: 'Week'}
 const calendarDays = document.getElementById("calendarDays");
 const currentMonthDisplay = document.getElementById("currentMonth");
 const currentYearDisplay = document.getElementById("currentYear");
-const blocks = document.getElementById("blocks")
+const blockss = document.getElementById("blocks")
+const blocks = blockss.querySelectorAll(".block")
 const hourHeight = 60; // Height in pixels for one hour block
 const quarterHeight = hourHeight / 4; // 15-minute interval height
 const scheduleContainer = document.getElementById("schedule")
 const scheduleTop = document.querySelector(".blocks").getBoundingClientRect().top;
 const scheduleHeight = (scheduleContainer.children.length-1) * hourHeight; // 9 hours from 9:00 to 17:00
 let currentBlock = null;
+let dayToSend = 0
 
 function renderCalendar() {
 
@@ -132,7 +134,8 @@ function getPreviousDay(month, year) {
 }
 
 function getDay(year, month, day) {
-    blocks.innerHTML=''
+    dayToSend=day
+    blockss.innerHTML=''
     fetch('/employee-day?year='+year+'&month='+month+'&day='+day).
         then(response => {
         if (!response.ok) {
@@ -148,7 +151,8 @@ function getDay(year, month, day) {
                 div.style.height=appointment[1][1]+'px'
                 div.textContent=appointment[0].service+' '+appointment[0].startDateTimeFormatted+' - '+appointment[0].endDateTimeFormatted
                 div.setAttribute('data-id', 1)
-                blocks.appendChild(div)
+                div.setAttribute("start", appointment[0].startDateTimeFormatted)
+                blockss.appendChild(div)
                 makeBlockDraggable(div)
             })
         })
@@ -156,6 +160,22 @@ function getDay(year, month, day) {
             console.error('error', error)
         })
 }
+
+const updateTextContent = (block) => {
+    const top = parseInt(block.style.top, 10);
+    const height = parseInt(block.style.height, 10);
+
+    const startMinutes = (top - 18) + openingHours[0][0] * 60;
+    const startHour = Math.floor(startMinutes / 60);
+    const startMinute = String(startMinutes % 60).padStart(2, "0");
+
+    const endMinutes = startMinutes + height+2;
+    const endHour = Math.floor(endMinutes / 60);
+    const endMinute = String(endMinutes % 60).padStart(2, "0");
+
+    const baseText = block.textContent.split(" ").slice(0, -3).join(" ");
+    block.textContent = `${baseText} ${startHour}:${startMinute} - ${endHour}:${endMinute}`;
+};
 
 function makeBlockDraggable(block) {
     block.addEventListener("mousedown", (e) => {
@@ -172,11 +192,41 @@ function makeBlockDraggable(block) {
             newTop = snapToInterval(newTop, height);
             newTop = limitPosition(newTop, parseInt(height));
 
-            if (!isOverlapping(currentBlock, newTop, parseInt(height))) {
+            const overlapping = isOverlapping(currentBlock, newTop, parseInt(height)).isOverlapping
+            const overlappingBlock = isOverlapping(currentBlock, newTop, parseInt(height)).overlappingBlock
+
+
+            if (overlapping && overlappingBlock) {
+
+                let higherBlock = currentBlock
+                let lowerBlock = overlappingBlock
+
+
+                const topOverlappingBlock = parseInt(overlappingBlock.style.top.substring(0,overlappingBlock.style.top.length-2))
+                const topCurrentBlock = parseInt(currentBlock.style.top.substring(0,currentBlock.style.top.length-2))
+
+
+                if (topOverlappingBlock<topCurrentBlock){
+                    higherBlock = overlappingBlock
+                    lowerBlock = currentBlock
+                }
+
+                const newTopForHigher
+                    =parseInt(lowerBlock.style.top.substring(0,lowerBlock.style.top.length-2))
+                    +parseInt(lowerBlock.style.height.substring(0,lowerBlock.style.height.length-2))
+                    -parseInt(higherBlock.style.height.substring(0,higherBlock.style.height.length-2))
+
+                lowerBlock.style.top = `${higherBlock.style.top}`
+                higherBlock.style.top = newTopForHigher+'px'
+
+                updateTextContent(higherBlock);
+                updateTextContent(lowerBlock);
+
+                currentBlock.classList.remove("dragging");
+                currentBlock = null; // Reset after swapping
+            } else {
                 currentBlock.style.top = `${newTop}px`;
                 currentBlock.classList.remove("overlap");
-            } else {
-                currentBlock.classList.add("overlap");
             }
         }
     });
@@ -233,16 +283,28 @@ function changeDate(yearInput, monthInput){
     renderCalendar()
 }
 
+
 const isOverlapping = (block, top, height) => {
-    return Array.from(blocks).some(other => {
+    const overlappingBlock= Array.from(blockss.querySelectorAll(".block")).find(other => {
         if (other === block) return false;
-        const otherTop = parseInt(other.style.top);
-        const otherHeight = parseInt(other.style.height);
-        return (
-            top < otherTop + otherHeight && top + height > otherTop // Overlap condition
-        );
+
+        const otherTop = parseInt(other.style.top, 10);
+        const otherHeight = parseInt(other.style.height, 10);
+
+        if (isNaN(otherTop) || isNaN(otherHeight)) {
+            console.warn("Block missing top/height:", other);
+            return false;
+        }
+
+        return top < otherTop + otherHeight && top + height > otherTop; // Overlap condition
     });
+
+    return {
+        isOverlapping: !!overlappingBlock,
+        overlappingBlock: overlappingBlock || null,
+    };
 };
+
 
 // Snap position to 15-minute intervals
 const snapToInterval = (top, height) => {
@@ -260,11 +322,11 @@ const changeTextContent = (top) => {
     const newStartTimeInMinutes = (top-18)+openingHours[0][0]*60
     const newStartHour = Math.floor(newStartTimeInMinutes/60)
     const newStartMinutes = String(newStartTimeInMinutes%60).padStart(2,"0")
-    const newEndTimeInMinutes = (top-18+heightNumber)+openingHours[0][0]*60
+    const newEndTimeInMinutes = (top-16+heightNumber)+openingHours[0][0]*60
     const newEndHour = Math.floor(newEndTimeInMinutes/60)
     const newEndMinutes = String(newEndTimeInMinutes%60).padStart(2,"0")
     newTextContentBeginning=newTextContentBeginning+newStartHour+":"+newStartMinutes+" - " + newEndHour+":"+newEndMinutes
-    if(!isOverlapping(currentBlock, top, parseInt(height))){
+    if(!isOverlapping(currentBlock, top, parseInt(height)).isOverlapping){
         currentBlock.textContent=newTextContentBeginning
     }
 
@@ -276,7 +338,7 @@ const limitPosition = (top, blockHeight) => {
         18,
         Math.min(
             top,
-            scheduleHeight-blockHeight+18
+            scheduleHeight-blockHeight+16
         )
     );
     changeTextContent(newTop)
@@ -285,22 +347,31 @@ const limitPosition = (top, blockHeight) => {
 
 // Save changes
 document.getElementById("save-button").addEventListener("click", () => {
-    const updatedBlocks = Array.from(blocks).map(block => {
+    const newBlocks = document.querySelectorAll(".block")
+    const updatedBlocks = Array.from(newBlocks).map(block => {
+
         const top = parseInt(block.style.top);
-        const startHour = 9 + Math.floor(top / hourHeight);
-        const startMinutes = Math.round((top % hourHeight) / quarterHeight) * 15;
+
+        const startMinutes = (top - 18) + openingHours[0][0] * 60;
+        const startHour = Math.floor(startMinutes / 60);
+        const startMinute = String(startMinutes % 60).padStart(2, "0");
+
+        // const startHour = 9 + Math.floor(top / hourHeight);
+        // const startMinutes = Math.round((top % hourHeight) / quarterHeight) * 15;
         const endHour = startHour + Math.floor(parseInt(block.style.height) / hourHeight);
         const endMinutes = (startMinutes + Math.round((parseInt(block.style.height) % hourHeight) / quarterHeight) * 15) % 60;
         return {
             id: block.dataset.id,
             label: block.textContent,
-            start: `${String(startHour).padStart(2, "0")}:${String(startMinutes).padStart(2, "0")}`,
-            end: `${String(endHour).padStart(2, "0")}:${String(endMinutes).padStart(2, "0")}`
+            start: block.getAttribute("start"),
+            year: year,
+            month: month+1,
+            day: dayToSend
         };
     });
 
     // Send updated data to the server
-    fetch("/api/schedule/update", {
+    fetch("/appointments-update", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedBlocks)
@@ -313,6 +384,74 @@ document.getElementById("save-button").addEventListener("click", () => {
     });
 });
 
+function renderMessages (x) {
+    const chatMessages = document.getElementById("chat-messages")
+    const newChatMessages = document.createElement('div')
+    newChatMessages.id='chat-messages'
+    //chatMessages.innerHTML=''
+    fetch(`/get-company-chat`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error');
+            }
+            return response.json();
+        })
+        .then(data => {
+            data.forEach(message => {
+                const msg = document.createElement("div")
+                msg.classList.add('message')
+                msg.setAttribute('bis_skin_checked', 1)
+                if (message.amISender===true) {
+                    msg.classList.add('user')
+                } else {
+                    msg.classList.add('other')
+                }
+                const nick = document.createElement("div")
+                nick.classList.add('message-info')
+                nick.textContent=message.sender
+                nick.setAttribute('bis_skin_checked', 1)
+                const content = document.createElement("div")
+                content.classList.add('message-content')
+                content.textContent=message.content
+                content.setAttribute('bis_skin_checked', 1)
+                msg.appendChild(nick)
+                msg.appendChild(content)
+                newChatMessages.appendChild(msg)
+            })
+            if (newChatMessages.innerHTML!==chatMessages.innerHTML){
+                chatMessages.innerHTML=newChatMessages.innerHTML
+            }
+            if(x){
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+function send() {
+    const message = document.getElementById("message")
+    fetch("/send-company-message", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: message.value
+    }).then(r => {
+        renderMessages(true)
+        message.value=''
+    })
+}
+
+document.querySelector(".chat-input input").addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+        event.preventDefault(); // Zatrzymaj domyślne zachowanie formularza
+        send();
+    }
+});
+
+setInterval(renderMessages, 1000)
 renderCalendar();
+renderMessages(true)
 getDay(year, month, 1)
 /*]]>*/

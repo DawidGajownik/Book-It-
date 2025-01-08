@@ -38,3 +38,48 @@
     border: none;
     border-radius: 0 5px 5px 0;
 }
+
+/* Wiadomość */
+.message {
+    display: flex;
+    flex-direction: column; /* Ograniczenie szerokości wiadomości */
+    margin-bottom: 1rem;
+    position: relative; /* Dla pozycji nicku */
+}
+
+/* Wiadomości użytkownika */
+.message.user {
+    align-self: flex-end; /* Wiadomości użytkownika wyrównane do prawej */
+    text-align: right;
+}
+
+.message.user .message-content {
+    background-color: #e0f7fa; /* Jasnoniebieski kolor */
+    border-radius: 10px 10px 0 10px;
+    padding: 0.5rem;
+    color: #000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Wiadomości innych osób */
+.message.other {
+    align-self: flex-start; /* Wiadomości innych osób wyrównane do lewej */
+    text-align: left;
+}
+
+.message.other .message-content {
+    background-color: #fce4ec; /* Jasnoróżowy kolor */
+    border-radius: 10px 10px 10px 0;
+    padding: 0.5rem;
+    color: #000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Nick użytkownika */
+.message-info {
+    font-size: 10px; /* Bardzo mały rozmiar czcionki */
+    color: #555;
+    margin-bottom: 0.2rem;
+    position: relative; /* Ułatwia pozycjonowanie */
+    padding-left: 5px;
+}

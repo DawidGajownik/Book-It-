@@ -34,14 +34,17 @@ body {
     position: absolute;
     left: 0;
     width: 200px;
-    background-color: #4caf50;
+    background-color: #4caf50; /* Kolor tła bloku */
     color: #fff;
     font-size: 12px;
     line-height: 20px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     text-align: center;
     cursor: pointer;
     user-select: none;
+    border: 1px solid #2e7d32; /* Obwódka wokół bloku */
+    border-radius: 4px; /* Zaokrąglone rogi (opcjonalnie) */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Lekki cień */
+    transition: border-color 0.2s, box-shadow 0.2s; /* Efekt przejścia */
 }
 .block.dragging {
     opacity: 0.8;

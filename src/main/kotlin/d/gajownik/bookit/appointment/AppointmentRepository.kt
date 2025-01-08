@@ -8,4 +8,5 @@ interface AppointmentRepository : JpaRepository<Appointment, Long> {
     fun findAllByEmployeeId(userId: Long): List<Appointment>
     fun findAllByEmployeeIdAndStartDateTimeAfterAndEndDateTimeBefore(userId: Long, dateFrom: LocalDateTime, dateTo: LocalDateTime): List<Appointment>
     fun countAllByEmployeeIdAndStartDateTime(userId: Long, startDateTime: LocalDateTime): Int
+    fun getByEmployeeIdAndStartDateTime(employeeId: Long, startDateTime: LocalDateTime): Appointment
 }

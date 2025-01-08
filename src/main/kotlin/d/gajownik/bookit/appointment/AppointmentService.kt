@@ -87,12 +87,10 @@ class AppointmentService(
         return weekDays
     }
     fun getAppointmentsWithPosition(user: User, year: Int, month: Int, day: Int, company: Company): List<List<Any>>{
-        val result = findAllByEmployeeIdAndDay(user.id, LocalDate.of(year, month, day))
+        return findAllByEmployeeIdAndDay(user.id, LocalDate.of(year, month, day))
             .map { s: Appointment -> AppointmentDTO(s)  }
-            .map { s-> listOf(s, listOf((60*(s.startDateTime.hour-company.workTimeStart.hour)+(s.startDateTime.minute-company.workTimeStart.minute)+18),(60*(s.endDateTime.hour-s.startDateTime.hour))+(s.endDateTime.minute-s.startDateTime.minute))) }
+            .map { s-> listOf(s, listOf((60*(s.startDateTime.hour-company.workTimeStart.hour)+(s.startDateTime.minute-company.workTimeStart.minute)+18),(60*(s.endDateTime.hour-s.startDateTime.hour))+(s.endDateTime.minute-s.startDateTime.minute)-2)) }
             .toList()
-        val returnList = ArrayList<List<Any>>()
-        return result
     }
 
     fun getAppointmentsWithPositionMap(user: User, year: Int, month: Int, day: Int, company: Company): MutableMap<AppointmentDTO, List<Int>>{
@@ -109,5 +107,11 @@ class AppointmentService(
     }
     fun findAllByEmployeeId(employeeId: Long) : List<Appointment>{
         return appointmentRepository.findAllByEmployeeId(employeeId)
+    }
+    fun getByEmployeeIdAndStartDateTime(employeeId: Long, startDateTime: LocalDateTime): Appointment{
+        return appointmentRepository.getByEmployeeIdAndStartDateTime(employeeId, startDateTime)
+    }
+    fun update (appointment: Appointment){
+        appointmentRepository.save(appointment)
     }
 }

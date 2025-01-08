@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository
 
 @Configuration
 @EnableWebSecurity
@@ -20,10 +21,11 @@ class SecurityConfig {
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+
         http
             .authorizeHttpRequests { requests ->
                 requests
-                    .requestMatchers( "/", "/css/**", "/js/**", "/images/**", "/signup", "/provider-signup", "/process", "/service/**", "/services/**", "/filter-services*", "/pages", "/accept-invitation").permitAll() // Publiczne strony
+                    .requestMatchers( "/", "/css/**", "/js/**", "/images/**", "/signup", "/provider-signup", "/process", "/service/**", "/services/**", "/filter-services*", "/pages", "/accept-invitation", "/appointments-update").permitAll() // Publiczne strony
                     .requestMatchers("/invite").hasRole("PROVIDER")
                     .anyRequest().authenticated() // Wszystkie inne wymagają zalogowania
             }
@@ -44,6 +46,8 @@ class SecurityConfig {
             .logout { logout ->
                 logout
                     .permitAll()
+            }
+            .csrf { it.disable()
             }
         return http.build()
     }
